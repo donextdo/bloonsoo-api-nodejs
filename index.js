@@ -25,8 +25,10 @@ const __dirname = path.dirname(__filename)
 app.use('/public', express.static(__dirname + '/public'))
 
 import hotelRoute from './routes/hotel.js'
+import roomRoute from './routes/room.js'
 
 app.use('/api/hotel/', hotelRoute)
+app.use('/api/rooms/', roomRoute)
 
 const port = process.env.PORT || 9000
 

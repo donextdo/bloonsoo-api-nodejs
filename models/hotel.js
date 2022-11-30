@@ -49,6 +49,10 @@ const HotelSchema = new mongoose.Schema({
         type: AddressSchema,
         required: true
     },
+    rooms: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Room'
+    }],
     cover_image: {
         type: String
     }
