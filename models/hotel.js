@@ -43,6 +43,36 @@ const ExtraBedSchema = new mongoose.Schema({
     }]
 })
 
+const PoliciesSchema = new mongoose.Schema({
+    cancellation_duration: {
+        type: Number
+    },
+    pay_time: {
+        type: String
+    },
+    preventAccidental_bookings: {
+        type: Boolean
+    },
+    check_in_form: {
+        type: String
+    },
+    check_in_untill: {
+        type: String
+    },
+    check_out_form: {
+        type: String
+    },
+    check_out_untill: {
+        type: String
+    },
+    accommodate_children: {
+        type: Boolean
+    },
+    pets: {
+        type: Boolean
+    }
+})
+
 
 const HotelSchema = new mongoose.Schema({
     property_name: {
@@ -96,6 +126,9 @@ const HotelSchema = new mongoose.Schema({
     languages: [{
         type: String
     }],
+    facilities: [{
+        type: String
+    }],
     extra_beds: {
         type: Boolean
     },
@@ -104,8 +137,18 @@ const HotelSchema = new mongoose.Schema({
     },
     amenities: [{
         type: String
-    }]
-
+    }],
+    policies: {
+        type: PoliciesSchema
+    },
+    credit_card_options: {
+        type: Boolean,
+        default: false
+    },
+    is_open_to_bookings: {
+        type: Boolean,
+        default: false
+    }
     
 }, {timestamps: true})
 

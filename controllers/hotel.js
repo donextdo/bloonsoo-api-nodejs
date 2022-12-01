@@ -66,7 +66,9 @@ export const setCoverPhoto = async (req, res) => {
 export const getAllHotels = async (req, res) => {
     try {
         
-        const hotels = await Hotel.find()
+        const hotels = await Hotel.find({
+            is_open_to_bookings: true
+        })
 
         res.status(200).json(hotels)
 
@@ -78,6 +80,63 @@ export const getAllHotels = async (req, res) => {
 
 export const addFacilities = async (req, res) => {
 
+    try {
+        
+        const hotelExist = await Hotel.findById(req.params.id)
+
+        if(!hotelExist) return res.status(404).json({message: `Cannot find hotel with id ${req.params.id}`})
+
+        const hotel = await Hotel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: req.body
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        )
+
+        res.status(201).json(hotel)
+
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
+
+
+export const addPolicies = async (req, res) => {
+
+    const policies = {
+        policies: req.body
+    }
+
+    try {
+        
+        const hotelExist = await Hotel.findById(req.params.id)
+
+        if(!hotelExist) return res.status(404).json({message: `Cannot find hotel with id ${req.params.id}`})
+
+        const hotel = await Hotel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: policies
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        )
+
+        res.status(201).json(hotel)
+
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
+
+
+export const finalize = async (req, res) => {
     try {
         
         const hotelExist = await Hotel.findById(req.params.id)
