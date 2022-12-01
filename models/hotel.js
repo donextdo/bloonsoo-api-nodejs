@@ -16,6 +16,33 @@ const AddressSchema = new mongoose.Schema({
     }
 })
 
+const ParkingSchema = new mongoose.Schema({
+    parking_type: {
+        type: String
+    },
+    parking_type_2: {
+        type: String
+    },
+    parking_type_3: {
+        type: String
+    },
+    reservation: {
+        type: Boolean
+    },
+    parking_price: {
+        type: String
+    }
+})
+
+const ExtraBedSchema = new mongoose.Schema({
+    no_of_beds: {
+        type: Number
+    },
+    accommodate_guests: [{
+        type: String
+    }]
+})
+
 
 const HotelSchema = new mongoose.Schema({
     property_name: {
@@ -55,7 +82,30 @@ const HotelSchema = new mongoose.Schema({
     }],
     cover_image: {
         type: String
-    }
+    },
+    parking: {
+        type: Boolean,
+        default: false
+    },
+    parking_details: {
+        type: ParkingSchema,
+    },
+    breakfast: {
+        type: Boolean
+    },
+    languages: [{
+        type: String
+    }],
+    extra_beds: {
+        type: Boolean
+    },
+    extra_beds_options: {
+        type: ExtraBedSchema
+    },
+    amenities: [{
+        type: String
+    }]
+
     
 }, {timestamps: true})
 

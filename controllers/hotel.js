@@ -74,3 +74,30 @@ export const getAllHotels = async (req, res) => {
         res.status(500).json({message: error.message})
     }
 }
+
+
+export const addFacilities = async (req, res) => {
+
+    try {
+        
+        const hotelExist = await Hotel.findById(req.params.id)
+
+        if(!hotelExist) return res.status(404).json({message: `Cannot find hotel with id ${req.params.id}`})
+
+        const hotel = await Hotel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: req.body
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        )
+
+        res.status(201).json(hotel)
+
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
