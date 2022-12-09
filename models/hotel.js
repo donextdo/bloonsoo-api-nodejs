@@ -106,6 +106,9 @@ const HotelSchema = new mongoose.Schema({
         type: AddressSchema,
         required: true
     },
+    about: {
+        type: String
+    },
     rooms: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Room'
@@ -113,6 +116,9 @@ const HotelSchema = new mongoose.Schema({
     cover_image: {
         type: String
     },
+    gallery_images: [{
+        type: String
+    }],
     parking: {
         type: Boolean,
         default: false

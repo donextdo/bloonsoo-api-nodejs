@@ -9,7 +9,8 @@ export const createHotel = async (req, res) => {
         contact_phone_number_alternative: req.body.contact_phone_number_alternative,
         is_own_multiple_hotels: req.body.is_own_multiple_hotels,
         use_channel_manager: req.body.use_channel_manager,
-        property_address: req.body.property_address
+        property_address: req.body.property_address,
+        about: req.body.about
     })
 
     try {
@@ -63,14 +64,33 @@ export const setCoverPhoto = async (req, res) => {
 }
 
 
-export const getAllHotels = async (req, res) => {
+export const addGalleryPhotos = async (req, res) => {
+    const file = req.file
+
+    if(!file) {
+        return res.status(400).json({message: "Please add an image"})
+    }
+
+    const imgPath = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+
     try {
         
-        const hotels = await Hotel.find({
-            is_open_to_bookings: true
-        })
+        const hotelExist = await Hotel.findById(req.params.id)
 
-        res.status(200).json(hotels)
+        if(!hotelExist) return res.status(404).json({message: `Cannot find hotel with id ${req.params.id}`})
+
+        const hotel = await Hotel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $push: {gallery_images: imgPath}
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        )
+
+        res.status(201).json(imgPath)
 
     } catch (error) {
         res.status(500).json({message: error.message})
@@ -155,6 +175,38 @@ export const finalize = async (req, res) => {
         )
 
         res.status(201).json(hotel)
+
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
+
+
+export const getAllHotels = async (req, res) => {
+    try {
+        
+        const hotels = await Hotel.find({
+            is_open_to_bookings: true
+        })
+
+        res.status(200).json(hotels)
+
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
+
+
+export const getHotelById = async (req, res) => {
+    try {
+        
+        const hotel = await Hotel.findById(
+            req.params.id
+        ).populate('rooms')
+
+        if(!hotel) return res.status(404).json({message: `Cannot find hotel with id ${req.params.id}`})
+
+        res.status(200).json(hotel)
 
     } catch (error) {
         res.status(500).json({message: error.message})
