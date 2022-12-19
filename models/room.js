@@ -48,6 +48,9 @@ const RoomSchema = new mongoose.Schema({
     facilities: [{
         type: String,
         required: true
+    }],
+    gallery_images: [{
+        type: String
     }]
     
 }, {timestamps: true})

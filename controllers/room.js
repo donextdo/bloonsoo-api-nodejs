@@ -64,3 +64,20 @@ export const deleteRoom = async (req, res) => {
     }
 }
 
+export const addGalleryPhotos = async (req, res) => {
+    const file = req.file
+
+    if(!file) {
+        return res.status(400).json({message: "Please add an image"})
+    }
+
+    const imgPath = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+
+    try {
+
+        res.status(201).json(imgPath)
+
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
