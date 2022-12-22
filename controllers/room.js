@@ -48,6 +48,30 @@ export const getRoomsByProperyId = async(req, res) => {
     }
 }
 
+export const getRoomGroupsByType = async(req, res) => {
+    try {
+        
+        const rooms = await Room.aggregate([
+            {
+                $match: {
+                    property_id: req.params.id
+                }
+            },
+            {
+                $group: {
+                  _id: '$room_type',
+                  rooms: { $push: '$$ROOT' }
+                }
+            }
+        ])
+
+        res.status(200).json(rooms)
+
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
+
 export const deleteRoom = async (req, res) => {
     try {
         

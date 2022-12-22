@@ -4,15 +4,15 @@ import mongoose from 'mongoose'
 const AddressSchema = new mongoose.Schema({
     street_address: {
         type: String,
-        required: true
+        // required: true
     },
     country: {
         type: String,
-        required: true
+        // required: true
     },
     postal_code: {
         type: String,
-        required: true
+        // required: true
     }
 })
 
@@ -89,7 +89,7 @@ const HotelSchema = new mongoose.Schema({
     },
     contact_phone_number: {
         type: String,
-        required: true
+        // required: true
     },
     contact_phone_number_alternative: {
         type: String,
@@ -104,7 +104,7 @@ const HotelSchema = new mongoose.Schema({
     },
     property_address: {
         type: AddressSchema,
-        required: true
+        // required: true
     },
     about: {
         type: String

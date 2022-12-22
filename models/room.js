@@ -38,6 +38,17 @@ const RoomSchema = new mongoose.Schema({
         type: BedSchema,
         required: true
     }],
+    guests: {
+        type: Number,
+        default: 1,
+    },
+    is_breakfast_available: {
+        type: Boolean,
+        default: false
+    },
+    breakfast_price: {
+        type: String,
+    },
     room_size: {
         type: String,
     },
