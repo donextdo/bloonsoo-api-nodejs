@@ -212,3 +212,24 @@ export const getHotelById = async (req, res) => {
         res.status(500).json({message: error.message})
     }
 }
+
+
+export const deleteHotel = async (req, res) => {
+    try {
+
+        const hotel = await Hotel.findById(
+            req.params.id
+        )
+
+        if(!hotel) return res.status(404).json({message: `Cannot find hotel with id ${req.params.id}`})
+        
+        await Hotel.findByIdAndDelete(
+            req.params.id
+        )
+
+        res.status(200).json({msg: 'Hotel deleted'})
+
+    } catch (error) {
+        res.status(500).json({message: error.message}) 
+    }
+}

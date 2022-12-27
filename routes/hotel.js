@@ -3,7 +3,7 @@ import { Router } from 'express'
 import multer from 'multer'
 import storage from '../middleware/multerStorage.js'
 
-import { createHotel, setCoverPhoto, addGalleryPhotos, getAllHotels, addFacilities, addPolicies, finalize, getHotelById } from '../controllers/hotel.js'
+import { createHotel, setCoverPhoto, addGalleryPhotos, getAllHotels, addFacilities, addPolicies, finalize, getHotelById, deleteHotel } from '../controllers/hotel.js'
 
 const uploadOptions = multer({storage: storage})
 
@@ -24,5 +24,7 @@ router.patch('/gallery/:id', uploadOptions.single('gallery_img'), addGalleryPhot
 router.patch('/policies/:id', addPolicies)
 
 router.patch('/finalize/:id', finalize)
+
+router.delete('/:id', deleteHotel)
 
 export default router
