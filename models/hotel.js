@@ -75,6 +75,10 @@ const PoliciesSchema = new mongoose.Schema({
 
 
 const HotelSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     property_name: {
         type: String,
         required: true

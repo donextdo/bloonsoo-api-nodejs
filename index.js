@@ -7,6 +7,14 @@ import helmet from 'helmet'
 import path from 'path'
 import { fileURLToPath } from 'url';
 
+import hotelRoute from './routes/hotel.js'
+import roomRoute from './routes/room.js'
+import authRoute from './routes/auth.js'
+import bookingRoute from './routes/booking.js'
+
+import passport from 'passport'
+import('./utils/strategy.js')
+
 config()
 
 const app = express()
@@ -24,11 +32,10 @@ const __dirname = path.dirname(__filename)
 
 app.use('/public', express.static(__dirname + '/public'))
 
-import hotelRoute from './routes/hotel.js'
-import roomRoute from './routes/room.js'
-
 app.use('/api/hotel/', hotelRoute)
 app.use('/api/rooms/', roomRoute)
+app.use('/api/auth/', authRoute)
+app.use('/api/booking/', bookingRoute)
 
 const port = process.env.PORT || 9000
 
