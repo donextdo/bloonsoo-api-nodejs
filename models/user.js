@@ -27,7 +27,33 @@ const UserSchema = new mongoose.Schema(
             enum: ['active', 'inactive'],
             default: 'active'
         },
+        firstName: {
+            type: String
+        },
+        lastName: {
+            type: String,
+        },
+        location: {
+            type: String
+        },
+        mobile: {
+            type: String
+        },
+        about: {
+            type: String
+        },
+        profilePic: {
+            type: String
+        },
         isEmailVerified: {
+            type: Boolean,
+            default: false
+        },
+        isMobileVerified: {
+            type: Boolean,
+            default: false
+        },
+        isProfileComplete: {
             type: Boolean,
             default: false
         }

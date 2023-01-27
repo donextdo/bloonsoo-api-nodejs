@@ -42,10 +42,12 @@ export const AuthenticatedMiddleware = async (req, res, next) => {
 
 export const AuthenticatedUserMiddleware = async (req, res, next) => {
     AuthenticatedMiddleware(req, res, () => {
-        if(req.user._id === req.params.id || req.user.role === 'admin') {
+
+        if(req.user._id.toString() === req.params.id || req.user.role === 'admin') {
             next()
         }
         else {
+            console.log('hello')
             return res.status(403).send('You are not allowed')
         }
     })

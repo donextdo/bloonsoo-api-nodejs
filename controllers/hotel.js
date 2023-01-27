@@ -1,7 +1,9 @@
 import Hotel from '../models/hotel.js'
+import User from  '../models/user.js'
 
 export const createHotel = async (req, res) => {
     const newHotel = new Hotel({
+        user: req.user._id.toString(),
         property_name: req.body.property_name,
         star_rating: req.body.star_rating,
         contact_name: req.body.contact_name,
@@ -23,7 +25,6 @@ export const createHotel = async (req, res) => {
         res.status(500).json({message: error.message})
     }
 }
-
 
 
 export const setCoverPhoto = async (req, res) => {
@@ -186,7 +187,12 @@ export const getAllHotels = async (req, res) => {
     try {
         
         const hotels = await Hotel.find({
-            is_open_to_bookings: true
+            $and: [
+                { is_open_to_bookings: true },
+                { status: 'active' }
+            ]  
+        }).sort({
+            createdAt: -1
         })
 
         res.status(200).json(hotels)
@@ -214,6 +220,50 @@ export const getHotelById = async (req, res) => {
 }
 
 
+export const approveHotel = async (req, res, next) => {
+    try {
+        
+        const hotel = await Hotel.findById(req.params.id)
+
+        if(!hotel) return res.status(404).json({
+            code: 'NOT_FOUND',
+            message: `cannot find hotel with id ${req.params.id}`
+        })
+
+        await Hotel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: {
+                    status: 'active'
+                }
+            },
+            {
+                runValidators: true
+            }
+        )
+
+        await User.findByIdAndUpdate(
+            hotel.user,
+            {
+                $set: {
+                    role: 'hotel-admin'
+                }
+            },
+            {
+                runValidators: true
+            }
+        )
+
+        res.status(200).json({
+            success: true
+        })
+
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
+
+
 export const deleteHotel = async (req, res) => {
     try {
 
@@ -231,5 +281,104 @@ export const deleteHotel = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({message: error.message}) 
+    }
+}
+
+
+export const publishHotel = async (req, res, next) => {
+    try {
+        const hotel = await Hotel.findById(req.params.id)
+
+        if(!hotel) return res.status(404).json({
+            code: 'NOT_FOUND',
+            message: `cannot find hotel with id ${req.params.id}`
+        })
+
+        if(req.user._id.toString() !== hotel.user || req.user.role !== 'admin')
+            return res.status(403).json({
+                code: 'UNAUTHORIZED',
+                message: 'You are not allowed to do this'
+            })
+
+        await Hotel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: {
+                    is_open_to_bookings: true
+                }
+            },
+            {
+                runValidators: true
+            }
+        )
+
+        res.status(200).json({
+            success: true
+        })
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
+
+export const unPublishHotel = async (req, res, next) => {
+    try {
+        const hotel = await Hotel.findById(req.params.id)
+
+        if(!hotel) return res.status(404).json({
+            code: 'NOT_FOUND',
+            message: `cannot find hotel with id ${req.params.id}`
+        })
+
+        if(req.user._id.toString() !== hotel.user || req.user.role !== 'admin')
+            return res.status(403).json({
+                code: 'UNAUTHORIZED',
+                message: 'You are not allowed to do this'
+            })
+
+        await Hotel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: {
+                    is_open_to_bookings: false
+                }
+            },
+            {
+                runValidators: true
+            }
+        )
+
+        res.status(200).json({
+            success: true
+        })
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
+
+export const getHotels = async (req, res, next) => {
+    try {
+        
+        const hotels = await Hotel.find().sort({
+            createdAt: -1
+        })
+
+        res.status(200).json(hotels)
+
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
+export const getMyHotels = async (req, res, next) => {
+    try {
+        const hotels = await Hotel.find({
+            user: req.user._id.toString()
+        })
+
+        res.status(200).json(hotels)
+    } catch (error) {
+        res.status(500).json(error.message)
     }
 }

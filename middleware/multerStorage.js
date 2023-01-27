@@ -20,4 +20,17 @@ const storage = multer.diskStorage({
     }
 })
 
+export const profileStorage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'public/profile')
+    },
+
+    filename: function(req, file, cb) {
+        const filename = uuidV4()
+        console.log(file.mimetype)
+        const extention = FILE_TYPE_MAP[file.mimetype]
+        cb(null, `${filename}.${extention}`)
+    }
+})
+
 export default storage

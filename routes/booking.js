@@ -16,4 +16,6 @@ router.get("/", AuthenticatedHotelAdminMiddleware, bookingController.getAllBooki
 
 router.get("/my/bookings", AuthenticatedMiddleware, bookingController.getMyBookings)
 
+router.get('/:id', AuthenticatedMiddleware, bookingController.getBookingById)
+
 export default router;

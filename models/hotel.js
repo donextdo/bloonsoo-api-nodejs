@@ -158,6 +158,11 @@ const HotelSchema = new mongoose.Schema({
     is_open_to_bookings: {
         type: Boolean,
         default: false
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'active', 'inactive'],
+        default: 'pending'
     }
     
 }, {timestamps: true})

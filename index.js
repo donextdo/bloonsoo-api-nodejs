@@ -11,6 +11,7 @@ import hotelRoute from './routes/hotel.js'
 import roomRoute from './routes/room.js'
 import authRoute from './routes/auth.js'
 import bookingRoute from './routes/booking.js'
+import userRoute from './routes/user.js'
 
 import passport from 'passport'
 import('./utils/strategy.js')
@@ -36,6 +37,7 @@ app.use('/api/hotel/', hotelRoute)
 app.use('/api/rooms/', roomRoute)
 app.use('/api/auth/', authRoute)
 app.use('/api/booking/', bookingRoute)
+app.use('/api/user/', userRoute)
 
 const port = process.env.PORT || 9000
 

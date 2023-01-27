@@ -5,7 +5,7 @@ import Hotel from "../models/hotel.js";
 const addBooking = async (req, res, next) => {
     try {
         
-        const user_id = req.user._id
+        const user_id = req.user._id.toString()
 
         const newBooking = new Booking({
             user_id,
@@ -56,7 +56,7 @@ const getAllBookings = async(req, res, next) => {
     try {
         
         if(req.user.role === 'admin') {
-            const bookings = await Booking.find().populate('booked_rooms')
+            const bookings = await Booking.find()
             .populate({
                 path: 'hotel_id',
                 select: 'property_name'
@@ -66,7 +66,7 @@ const getAllBookings = async(req, res, next) => {
         }
 
         const userHotels = await Hotel.find({
-            user: req.user._id 
+            user: req.user._id.toString() 
         })
 
         const hotelIds = userHotels.map(hotel => (hotel._id))
@@ -75,11 +75,12 @@ const getAllBookings = async(req, res, next) => {
             {
                 hotel_id: { $in: hotelIds }   
             }
-        ).populate('booked_rooms')
+        )
         .populate({
             path: 'hotel_id',
             select: 'property_name'
         })
+        .sort({_id: -1})
 
         res.status(200).json(bookings)
 
@@ -95,8 +96,12 @@ const getMyBookings = async(req, res, next) => {
     try {
         
         const bookings = Booking.find({
-            user_id: req.user._id
-        }).populate('booked_rooms')
+            user_id: req.user._id.toString()
+        }).populate({
+            path: 'hotel_id',
+            select: 'property_name'
+        })
+        .sort({_id: -1})
 
         res.status(200).json(bookings)
 
@@ -107,8 +112,43 @@ const getMyBookings = async(req, res, next) => {
     }
 }
 
+
+const getBookingById = async (req, res, next) => {
+    try {
+        
+        const id = req.params.id
+
+        const booking = Booking.findById(id).populate({
+            path: 'hotel_id',
+            select: 'property_name'
+        })
+
+        if(booking.user_id !== req.user._id.toString())
+            return res.status(403).json({
+                code: 'UNAUTHORIZED',
+                message: 'You are not allowed to do this'
+            })
+
+        const bookedRooms = await BookedRoom.find({
+            booking_id: id
+        })
+
+        res.status(200).json({
+            booking,
+            bookedRooms
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+
 export default {
     addBooking,
     getAllBookings,
-    getMyBookings
+    getMyBookings,
+    getBookingById
 }
