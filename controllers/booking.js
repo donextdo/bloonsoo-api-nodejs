@@ -95,12 +95,12 @@ const getAllBookings = async(req, res, next) => {
 const getMyBookings = async(req, res, next) => {
     try {
         
-        const bookings = Booking.find({
+        const bookings = await Booking.find({
             user_id: req.user._id.toString()
         }).populate({
             path: 'hotel_id',
-            select: 'property_name'
-        })
+            select: ['property_name', 'property_address']
+        }).populate('booked_rooms')
         .sort({_id: -1})
 
         res.status(200).json(bookings)
