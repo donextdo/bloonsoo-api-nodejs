@@ -12,8 +12,10 @@ import roomRoute from './routes/room.js'
 import authRoute from './routes/auth.js'
 import bookingRoute from './routes/booking.js'
 import userRoute from './routes/user.js'
+import checkoutRoute from './routes/checkout';
 
 import passport from 'passport'
+import checkout from './controllers/checkout.js'
 import('./utils/strategy.js')
 
 config()
@@ -38,6 +40,7 @@ app.use('/api/rooms/', roomRoute)
 app.use('/api/auth/', authRoute)
 app.use('/api/booking/', bookingRoute)
 app.use('/api/user/', userRoute)
+app.use('/api/checkout', checkoutRoute);
 
 const port = process.env.PORT || 9000
 
