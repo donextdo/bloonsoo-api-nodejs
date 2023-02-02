@@ -42,28 +42,25 @@ const checkoutSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  cvv: {
-    type: String,
-    required: true
-  }
+
 });
 
 UserSchema.pre('save', async function (next) {
-  if(!this.isModified('cvv')) {
+  if(!this.isModified('creditCardNumber')) {
       return next()
   }
 
-  const hash = await bcrypt.hash(this.cvv, 10)
+  const hash = await bcrypt.hash(this.creditCardNumber, 10)
 
-  this.cvv = hash
+  this.creditCardNumber = hash
 
   next()
 })
 
-UserSchema.methods.isValidPCvv = async function (
-  cvv
+UserSchema.methods.isValidcreditCardNumber = async function (
+  creditCardNumber
 ){
-  return await bcrypt.compare(cvv, this.cvv)
+  return await bcrypt.compare(creditCardNumber, this.creditCardNumber)
 }
 
 const checkout = mongoose.model('checkout', checkoutSchema);
