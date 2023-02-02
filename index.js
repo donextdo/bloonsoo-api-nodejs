@@ -12,10 +12,10 @@ import roomRoute from './routes/room.js'
 import authRoute from './routes/auth.js'
 import bookingRoute from './routes/booking.js'
 import userRoute from './routes/user.js'
-import checkoutRoute from './routes/checkout';
+import checkoutRoute from './routes/checkout.js';
 
 import passport from 'passport'
-import checkout from './controllers/checkout.js'
+
 import('./utils/strategy.js')
 
 config()

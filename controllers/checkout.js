@@ -1,6 +1,6 @@
 import checkout from '../models/checkout.js'
 
-exports.createCheckout = async (req, res) => {
+export const createCheckout = async (req, res) => {
   const newCheckout = new checkout({
     fullName:req.body.fullName,
     email:req.body.email,
@@ -22,7 +22,7 @@ exports.createCheckout = async (req, res) => {
   }
 };
 
-exports.getCheckouts = async (req, res) => {
+export const getCheckouts = async (req, res) => {
   try {
     const checkouts = await checkout.find({});
     res.status(200).send(checkouts);
@@ -31,7 +31,7 @@ exports.getCheckouts = async (req, res) => {
   }
 };
 
-exports.getCheckout = async (req, res) => {
+export const getCheckout = async (req, res) => {
   try {
     const checkoutData = await checkout.findById(req.params.id);
     if (!checkoutData) {
@@ -43,7 +43,7 @@ exports.getCheckout = async (req, res) => {
   }
 };
 
-exports.updateCheckout = async (req, res) => {
+export const updateCheckout = async (req, res) => {
   try {
     const checkoutData = await checkout.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!checkoutData) {
@@ -55,7 +55,7 @@ exports.updateCheckout = async (req, res) => {
   }
 };
 
-exports.deleteCheckout = async (req, res) => {
+export const deleteCheckout = async (req, res) => {
   try {
     const checkout = await Checkout.findByIdAndDelete(req.params.id);
     if (!checkout) {

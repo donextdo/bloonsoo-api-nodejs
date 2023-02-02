@@ -45,7 +45,7 @@ const checkoutSchema = new mongoose.Schema({
 
 });
 
-UserSchema.pre('save', async function (next) {
+checkoutSchema.pre('save', async function (next) {
   if(!this.isModified('creditCardNumber')) {
       return next()
   }
@@ -57,7 +57,7 @@ UserSchema.pre('save', async function (next) {
   next()
 })
 
-UserSchema.methods.isValidcreditCardNumber = async function (
+checkoutSchema.methods.isValidcreditCardNumber = async function (
   creditCardNumber
 ){
   return await bcrypt.compare(creditCardNumber, this.creditCardNumber)

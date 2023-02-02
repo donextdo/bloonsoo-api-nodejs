@@ -1,11 +1,8 @@
 import { Router } from 'express'
-import multer from 'multer'
-import storage from '../middleware/multerStorage.js'
 
-import {  createCheckout,getCheckouts,getCheckout,updateCheckout,deleteCheckout } from '../controllers/checkout'
+import {  createCheckout,getCheckouts,getCheckout,updateCheckout,deleteCheckout } from '../controllers/checkout.js'
 
 
-const uploadOptions = multer({storage: storage})
 
 const router = Router();
 
