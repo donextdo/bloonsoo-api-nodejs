@@ -362,6 +362,9 @@ export const getHotels = async (req, res, next) => {
         
         const hotels = await Hotel.find().sort({
             createdAt: -1
+        }).populate({
+            path: 'user',
+            select: ['username', 'firstName', 'lastName']
         })
 
         res.status(200).json(hotels)
