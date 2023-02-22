@@ -21,7 +21,8 @@ import {
     rejectHotel,
     inactiveHotel,
     activeHotelCount,
-    getAnnonymousHotels
+    getAnnonymousHotels,
+    searchHotels
 } from '../controllers/hotel.js'
 
 import { 
@@ -139,6 +140,11 @@ router.get(
     `${path}/get/user-not-exist/list`,
     AuthenticatedAdminMiddleware,
     getAnnonymousHotels
+)
+
+router.post(
+    `${path}/search`,
+    searchHotels
 )
 
 export default router

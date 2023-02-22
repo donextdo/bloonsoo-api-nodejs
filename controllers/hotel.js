@@ -507,3 +507,25 @@ export const getAnnonymousHotels = async (req, res, next) => {
         next(error)
     }
 }
+
+
+export const searchHotels = async (req, res, next) => {
+    try {
+        const query = req.body.query
+
+        const hotels = await Hotel.find({
+            
+            $and:[
+                {'property_address.street_address': { $regex : `${query}`, $options : 'i'}},
+                {is_open_to_bookings: true},
+                {status: 'active'}
+            ]
+            
+        })
+
+        res.status(200).json(hotels)
+    }
+    catch (error) {
+        next(error)
+    }
+}
