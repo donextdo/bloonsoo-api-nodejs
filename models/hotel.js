@@ -161,7 +161,7 @@ const HotelSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'active', 'inactive'],
+        enum: ['pending', 'active', 'inactive', 'rejected'],
         default: 'pending'
     }
     

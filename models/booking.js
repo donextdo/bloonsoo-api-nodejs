@@ -11,10 +11,7 @@ const BookingSchema = mongoose.Schema({
         ref: 'Hotel',
         required: true
     },
-    first_name: {
-        type: String,
-    },
-    last_name: {
+    full_name: {
         type: String
     },
     email: {
@@ -36,8 +33,26 @@ const BookingSchema = mongoose.Schema({
     booked_rooms: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'BookedRoom'
-    }]
-})
+    }],
+    status: {
+        type: Number,
+        default: 0
+    },
+    payment_method: {
+        type: Number
+    },
+    is_travelling_for_work: {
+        type: Boolean
+    },
+    commission_rate: {
+        type: Number,
+    },
+    commission: {
+        type: Number
+    }
+},
+{ timestamps: true }
+)
 
 const Booking = mongoose.model('Booking', BookingSchema)
 

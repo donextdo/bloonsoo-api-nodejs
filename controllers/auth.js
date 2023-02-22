@@ -1,10 +1,35 @@
 import User from "../models/user.js";
 import passport from "passport";
 import Token from "../utils/token.js";
+import VerifyToken from "../models/token.model.js";
+import randomstring from "randomstring";
+import sendEmail from "../utils/email/sendEmail.js";
+import ejs from 'ejs'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import dotenv from 'dotenv'
+import {
+    NotFoundError,
+    BadRequestError,
+    UnauthenticatedError,
+    ForbiddenError
+} from '../errors/errors.js'
+
+dotenv.config()
+
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename)
+
+const verifyEmailTemplate = fs.readFileSync(path.join(__dirname, '../utils/email/verify-email.ejs'), 'utf-8');
+
+const bloonsoWeb = process.env.BLOONSOO_WEB
+
 
 const signup = async (req, res, next) => {
     try {
-        passport.authenticate('signup', {session: false}, function (err, user, info) {
+        passport.authenticate('signup', {session: false}, async function (err, user, info) {
 
             if (err || !user) {
 
@@ -26,20 +51,39 @@ const signup = async (req, res, next) => {
             }
             const {password, ...userInfo} = user.toObject()
 
-            const payload = {id: user._id, email: user.email, role: user.role}
+            // const payload = {id: user._id, email: user.email, role: user.role}
 
-            const token = Token.createToken(payload)
+            // const token = Token.createToken(payload)
 
-            return res.json({
-                isRegistered: false,
-                userInfo,
-                token
+            const hash = randomstring.generate()
+
+            const verifyTokenDto = new VerifyToken({
+                user: user._id,
+                token: hash
+            })
+
+            await verifyTokenDto.save()
+
+            const verificationLink = `${bloonsoWeb}/email-verification/${hash}`
+
+            const data = { verifyUrl: verificationLink};
+            const renderedTemplate = ejs.render(verifyEmailTemplate, data);
+
+            await sendEmail(
+                'Verify Your Account with Bloonsoo', 
+                user.email,
+                renderedTemplate
+            )
+
+            return res.status(201).json({
+                isRegistered: true,
+                userInfo
             })
     
     
         })(req, res, next);
     } catch (error) {
-        res.status(500).json(error.message)
+        next(error)
     }
 }
 
@@ -132,9 +176,62 @@ const getAuthUser = (req, res, next) => {
     }
 }
 
+const verifyEmail = async (req, res, next) => {
+    try {
+        
+        const token = req.body.token
+        console.log(token)
+        const verifyToken = await VerifyToken.findOne({
+            token
+        })
+
+        if(!verifyToken) {
+            throw new NotFoundError(`INVALID_TOKEN`)
+        }
+
+        if(verifyToken.isCompleted) {
+            throw new ForbiddenError(`TOKEN_ALREADY_COMPLETED`)
+        }
+
+        await VerifyToken.findOneAndUpdate(
+            { token: token },
+            {
+                $set: {
+                    isCompleted: true
+                }
+            },
+            {
+                runValidators: true
+            }
+        )
+
+        await User.findByIdAndUpdate(
+            verifyToken.user.toString(),
+            {
+                $set: {
+                    isEmailVerified: true
+                }
+            },
+            {
+                runValidators: true
+            }
+        )
+
+        res.status(200).json({
+            success: true,
+            message: 'EMAIL_VERIFIED_SUCCESSFULLY'
+        })
+
+    }
+    catch (error) {
+        next(error)
+    }
+}
+
 export default {
     signup,
     signin,
     adminLogin,
-    getAuthUser
+    getAuthUser,
+    verifyEmail
 }

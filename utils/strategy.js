@@ -1,6 +1,7 @@
 import passport from "passport";
 import User from "../models/user.js";
 import { Strategy as localStrategy } from "passport-local";
+import logger from './logger.js'
 
 passport.use(
     'signup',
@@ -52,16 +53,16 @@ passport.use(
                     return done(null, false, {message: 'Wrong Password', code: 'INVALID_PASSWORD'});
                 }
 
-                if (req.path === '/admin/login') {
-                    console.log(user.role)
+                if (req.path === '/auth/admin/login') {
                     if(user.role === 'user') {
-                        console.log('first')
                         return done(null, false, {message: 'You are not an Admin', code: 'NOT_AN_ADMIN'});
                     }
                 }
 
+                logger.info(`${user.role} = ${email} ===> logged in successfully`)
                 return done(null, user, {message: 'Logged in Successfully'});
             } catch (error) {
+                logger.error()
                 return done(error);
             }
         }
