@@ -30,7 +30,7 @@ import roomRoute from './routes/room.js'
 app.use('/api/hotel/', hotelRoute)
 app.use('/api/rooms/', roomRoute)
 
-const port = process.env.PORT || 9000
+const port = process.env.PORT || 8888
 
 mongoose.connect(process.env.MONGO_URL)
     .then(() => {
