@@ -457,6 +457,7 @@ export const getHotels = async (req, res, next) => {
     }
 }
 
+
 export const getMyHotels = async (req, res, next) => {
     try {
         const hotels = await Hotel.find({
@@ -524,6 +525,34 @@ export const searchHotels = async (req, res, next) => {
         })
 
         res.status(200).json(hotels)
+    }
+    catch (error) {
+        next(error)
+    }
+}
+
+
+export const updateHotel = async (req, res, next) => {
+    try {
+
+        const hotel = await Hotel.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: {
+                    ...req.body
+                }
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        )
+
+        res.status(200).json({
+            hotel,
+            success: true
+        })
+
     }
     catch (error) {
         next(error)

@@ -149,8 +149,21 @@ const addHotelAdmin = async (req, res, next) => {
 }
 
 
+const totalUsers = async (req, res, next) => {
+    try {
+        const count = await User.countDocuments()
+
+        res.status(200).json(count)
+    }
+    catch (error) {
+        next(error)
+    }
+}
+
+
 export default {
     updateUser,
     setProfilePic,
-    addHotelAdmin
+    addHotelAdmin,
+    totalUsers
 }

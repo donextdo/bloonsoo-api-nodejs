@@ -2,7 +2,7 @@ import { Router } from 'express'
 import userController from '../controllers/user.js'
 import multer from 'multer'
 import { profileStorage } from '../middleware/multerStorage.js'
-import { AuthenticatedMiddleware, AuthenticatedAdminMiddleware, AuthenticatedUserMiddleware } from '../middleware/authenticated.js'
+import { AuthenticatedMiddleware, AuthenticatedAdminMiddleware, AuthenticatedHotelAdminMiddleware, AuthenticatedUserMiddleware } from '../middleware/authenticated.js'
 
 const router = Router()
 const uploadOptions = multer({storage: profileStorage})
@@ -22,6 +22,12 @@ router.post(
     `${path}/create-hotel-admin`,
     AuthenticatedAdminMiddleware,
     userController.addHotelAdmin
+)
+
+router.get(
+    `${path}/active-users`,
+    AuthenticatedHotelAdminMiddleware ,
+    userController.totalUsers
 )
 
 export default router

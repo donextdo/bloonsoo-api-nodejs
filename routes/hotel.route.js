@@ -22,7 +22,8 @@ import {
     inactiveHotel,
     activeHotelCount,
     getAnnonymousHotels,
-    searchHotels
+    searchHotels,
+    updateHotel
 } from '../controllers/hotel.js'
 
 import { 
@@ -145,6 +146,12 @@ router.get(
 router.post(
     `${path}/search`,
     searchHotels
+)
+
+router.patch(
+    `${path}/update-hotel/:id`,
+    AuthenticatedHotelAdminMiddleware,
+    updateHotel
 )
 
 export default router

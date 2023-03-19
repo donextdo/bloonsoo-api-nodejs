@@ -48,4 +48,10 @@ router.patch(
   bookingController.cancelBooking
 )
 
+router.get(
+  `${path}/get/booking-count`,
+  AuthenticatedHotelAdminMiddleware,
+  bookingController.getBookingCount
+)
+
 export default router;

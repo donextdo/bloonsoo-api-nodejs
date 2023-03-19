@@ -346,11 +346,46 @@ const cancelBooking = async (req, res, next) => {
 }
 
 
+const getBookingCount = async(req, res, next) => {
+    try {
+        
+        if(req.user.role === 'admin') {
+            const bookings = await Booking.countDocuments({
+                status: 1
+            })
+            
+            return res.status(200).json(bookings)
+        }
+
+        const userHotels = await Hotel.find({
+            user: req.user._id.toString() 
+        })
+
+        const hotelIds = userHotels.map(hotel => (hotel._id))
+
+        const bookings = await Booking.countDocuments(
+            {
+                hotel_id: { $in: hotelIds } ,
+                status: 1
+            }
+        )
+
+        res.status(200).json(bookings)
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+
 export default {
     addBooking,
     getAllBookings,
     getMyBookings,
     getBookingById,
     approveBooking,
-    cancelBooking
+    cancelBooking,
+    getBookingCount
 }
