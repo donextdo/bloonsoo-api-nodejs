@@ -6,7 +6,7 @@ import randomstring from "randomstring";
 import sendEmail from "../utils/email/sendEmail.js";
 import ejs from 'ejs'
 import fs from 'fs'
-import bcrypt from bcrypt
+import bcrypt from 'bcrypt'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import dotenv from 'dotenv'
@@ -233,7 +233,7 @@ const resetPassword = async (req, res, next) => {
     try {
         const token = req.body.token
         const password = req.body.password
-        
+
         const verifyToken = await VerifyToken.findOne({
             token
         })
