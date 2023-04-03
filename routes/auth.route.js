@@ -34,4 +34,14 @@ router.post(
     authController.verifyEmail
 )
 
+router.post(
+    `${path}/send-password-reset-email`,
+    authController.sendResetPasswordMail
+)
+
+router.post(
+    `${path}/reset-password`,
+    authController.resetPassword
+)
+
 export default router

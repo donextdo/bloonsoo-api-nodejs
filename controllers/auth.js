@@ -6,6 +6,7 @@ import randomstring from "randomstring";
 import sendEmail from "../utils/email/sendEmail.js";
 import ejs from 'ejs'
 import fs from 'fs'
+import bcrypt from bcrypt
 import path from 'path'
 import { fileURLToPath } from 'url'
 import dotenv from 'dotenv'
@@ -23,6 +24,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename)
 
 const verifyEmailTemplate = fs.readFileSync(path.join(__dirname, '../utils/email/verify-email.ejs'), 'utf-8');
+const passwordRestTemplate = fs.readFileSync(path.join(__dirname, '../utils/email/password-reset.ejs'), 'utf-8')
 
 const bloonsoWeb = process.env.BLOONSOO_WEB
 
@@ -180,7 +182,6 @@ const verifyEmail = async (req, res, next) => {
     try {
         
         const token = req.body.token
-        console.log(token)
         const verifyToken = await VerifyToken.findOne({
             token
         })
@@ -228,10 +229,109 @@ const verifyEmail = async (req, res, next) => {
     }
 }
 
+const resetPassword = async (req, res, next) => {
+    try {
+        const token = req.body.token
+        const password = req.body.password
+        
+        const verifyToken = await VerifyToken.findOne({
+            token
+        })
+
+        if(!verifyToken) {
+            throw new NotFoundError(`INVALID_TOKEN`)
+        }
+
+        if(verifyToken.isCompleted) {
+            throw new ForbiddenError(`TOKEN_ALREADY_COMPLETED`)
+        }
+
+        await VerifyToken.findOneAndUpdate(
+            { token: token },
+            {
+                $set: {
+                    isCompleted: true
+                }
+            },
+            {
+                runValidators: true
+            }
+        )
+
+        const hash = bcrypt.hash(password, 10)
+
+        await User.findByIdAndUpdate(
+            verifyToken.user.toString(),
+            {
+                $set: {
+                    password: hash
+                }
+            },
+            {
+                runValidators: true
+            }
+        )
+
+        res.status(200).json({
+            success: true,
+            message: 'PASSWORD_RESET_SUCCESSFULLY'
+        })
+    }
+    catch (error) {
+        next(error)
+    }
+}
+
+const sendResetPasswordMail = async (req, res, next) => {
+    try {
+        const email = req.body.email
+
+        const userExit = await User.findOne({
+            email
+        })
+
+        if(!userExit) {
+            throw new NotFoundError('USER_NOT_FOUND')
+        }
+
+        const hash = randomstring.generate()
+
+        const verifyTokenDto = new VerifyToken({
+            user: userExit._id,
+            token: hash
+        })
+
+        await verifyTokenDto.save()
+
+        const verificationLink = `${bloonsoWeb}/password-reset/${hash}`
+
+        const data = { verifyUrl: verificationLink};
+        const renderedTemplate = ejs.render(passwordRestTemplate, data);
+
+        await sendEmail(
+            'Verify Your Account with Bloonsoo', 
+            userExit.email,
+            renderedTemplate
+        )
+
+        res.status(200).json({
+            success: true,
+            message: 'VERIFICATION_LINK_SENT'
+        })
+
+    }
+    catch (error) {
+        next(error)
+    }
+}
+
+
 export default {
     signup,
     signin,
     adminLogin,
     getAuthUser,
-    verifyEmail
+    verifyEmail,
+    resetPassword,
+    sendResetPasswordMail
 }
