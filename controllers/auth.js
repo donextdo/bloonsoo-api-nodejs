@@ -291,7 +291,10 @@ const sendResetPasswordMail = async (req, res, next) => {
         })
 
         if(!userExit) {
-            throw new NotFoundError('USER_NOT_FOUND')
+            res.status(404).json({
+                success: false,
+                message: 'USER_NOT_FOUND'
+            })
         }
 
         const hash = randomstring.generate()
@@ -309,7 +312,7 @@ const sendResetPasswordMail = async (req, res, next) => {
         const renderedTemplate = ejs.render(passwordRestTemplate, data);
 
         await sendEmail(
-            'Verify Your Account with Bloonsoo', 
+            'Reset your bloonsoo account password', 
             userExit.email,
             renderedTemplate
         )
