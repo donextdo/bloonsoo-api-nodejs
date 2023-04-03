@@ -258,7 +258,7 @@ const resetPassword = async (req, res, next) => {
             }
         )
 
-        const hash = bcrypt.hash(password, 10)
+        const hash = await bcrypt.hash(password, 10)
 
         await User.findByIdAndUpdate(
             verifyToken.user.toString(),
