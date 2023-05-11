@@ -161,9 +161,95 @@ const totalUsers = async (req, res, next) => {
 }
 
 
+const getAllUsers = async (req, res, next) => {
+    try {
+        
+        const users = await User.find()
+
+        res.status(200).json(users)
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+const searchUser = async (req, res, next) => {
+    try {
+
+        const query = req.body.query
+        
+        const users = await User.find({
+            $or: [
+                {username: { $regex: `${query}`, $options: 'i' }},
+                {email: { $regex: `${query}`, $options: 'i' }}
+            ]
+        })
+
+        res.status(200).json(users)
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+const assignHotels = async (req, res, next) => {
+    try {
+        
+        const userId = req.body.userId
+        const hotelIds = req.body.hotelIds
+
+        console.log('userId', userId)
+
+        const user = await User.findByIdAndUpdate(
+            userId.toString(),
+            {
+                $set: {
+                    role: 'hotel-admin'
+                }
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        )
+
+        const hotel = await Hotel.updateMany(
+            {
+                _id: { $in: hotelIds }  
+            },
+            {
+                $set: {
+                    user: user._id
+                }
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        )
+
+        res.status(200).json(user)
+
+    } catch (error) {
+        if (error.code && error.code === 11000) {
+            return res.status(400).json({
+                duplicate: Object.keys(error.keyValue),
+                message: `Duplicate value entered for ${Object.keys(
+                    error.keyValue
+                  )} field, please choose another value`
+            })
+        }
+        next(error)
+    }
+}
+
+
 export default {
     updateUser,
     setProfilePic,
     addHotelAdmin,
-    totalUsers
+    totalUsers,
+    getAllUsers,
+    searchUser,
+    assignHotels
 }

@@ -532,6 +532,23 @@ export const searchHotels = async (req, res, next) => {
 }
 
 
+export const searchHotelByName = async (req, res, next) => {
+
+    try {
+        const query = req.body.query
+
+        const hotels = await Hotel.find({
+            property_name: { $regex : `${query}`, $options : 'i'}
+        })
+
+        res.status(200).json(hotels)
+    } catch (error) {
+        next(error)
+    }
+    
+}
+
+
 export const updateHotel = async (req, res, next) => {
     try {
 

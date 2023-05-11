@@ -30,4 +30,22 @@ router.get(
     userController.totalUsers
 )
 
+router.get(
+    `${path}/get-all-users`,
+    AuthenticatedAdminMiddleware ,
+    userController.getAllUsers
+)
+
+router.post(
+    `${path}/search-user`,
+    AuthenticatedAdminMiddleware ,
+    userController.searchUser
+)
+
+router.patch(
+    `${path}/hotels/assign-hotels`,
+    AuthenticatedAdminMiddleware,
+    userController.assignHotels
+)
+
 export default router

@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer'
-
-
+import logger from '../logger.js';
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.hostinger.com',
@@ -25,11 +24,11 @@ const sendEmail = async (subject, to, html) => {
             html: html, // html body
         })
     
-        console.log("Message sent: %s", info);
+        logger.info("Message sent: %s", info);
         return info
     }
     catch (error) {
-        console.log(error)
+        logger.error(error)
     }
     
 }
