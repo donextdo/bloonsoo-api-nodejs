@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Verify your email</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        background-color: #fff;
+      }
+      .container {
+        width: 90%;
+        margin: 0 auto;
+        background-color: #f1f1f1;
+        padding: 20px 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+      h1 {
+        color: #3A1C61;
+        font-size: 1.5rem;
+      }
+      h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333
+      }
+      p {
+        color: #333;
+        font-size: 1rem;
+        letter-spacing: .6px;
+        font-weight: 500;
+      }
+      a {
+        width: max-content;
+        background-color: #007bff;
+        border: none;
+        color: #fff !important;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        display: block;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      a:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <h1><%= property_name %></h1>
+
+        <p>
+            We are writing to inform you of a new booking made at your hotel through Bloonsoo. The booking details are as follows:
+        </p>
+
+        <h4>Booking reference number: <%= bookind_id %></h4>
+        <h4>Customer name: <%= customerName %></h4>
+        <h4>Total: <%= total %></h4>
+        <h4>Commission: USD <%= commission %></h4>
+
+        <a href="<%= url %>" arget="_blank">More Information</a>
+
+        <p>Please take the necessary steps to approve or reject the booking through Bloonsoo's website as soon as possible. We will notify the customer via email once your decision has been made</p>
+
+        <p>Thank you for partnering with Bloonsoo to provide quality service to our customers!</p> 
+
+        <p>Best regards,</p> 
+        <p>The Bloonsoo Team</p>
+
+    </div>
+  </body>
+</html>
