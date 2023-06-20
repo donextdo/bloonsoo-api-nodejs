@@ -67,7 +67,7 @@ export const setCoverPhoto = async (req, res) => {
 
 export const addGalleryPhotos = async (req, res) => {
     const file = req.file
-
+    console.log(file)
     if(!file) {
         return res.status(400).json({message: "Please add an image"})
     }
@@ -127,11 +127,11 @@ export const addFacilities = async (req, res) => {
 
 
 export const addPolicies = async (req, res) => {
-
+    console.log("hi")
     const policies = {
         policies: req.body
     }
-
+    
     try {
         
         const hotelExist = await Hotel.findById(req.params.id)
@@ -152,6 +152,7 @@ export const addPolicies = async (req, res) => {
         res.status(201).json(hotel)
 
     } catch (error) {
+        console.log("hii")
         res.status(500).json({message: error.message})
     }
 }
@@ -511,9 +512,10 @@ export const getAnnonymousHotels = async (req, res, next) => {
 
 
 export const searchHotels = async (req, res, next) => {
+    
     try {
         const query = req.body.query
-
+        
         const hotels = await Hotel.find({
             
             $and:[
@@ -523,8 +525,9 @@ export const searchHotels = async (req, res, next) => {
             ]
             
         })
-
+        
         res.status(200).json(hotels)
+        
     }
     catch (error) {
         next(error)

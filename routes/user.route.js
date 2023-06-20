@@ -11,6 +11,12 @@ const path = '/user'
 
 router.patch(`${path}/:id`, AuthenticatedUserMiddleware, userController.updateUser)
 
+router.get(
+    `${path}/:id`,
+    AuthenticatedUserMiddleware ,
+    userController.getOneUser
+)
+
 router.patch(
     `${path}/profilepic/:id`, 
     AuthenticatedUserMiddleware, 

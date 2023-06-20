@@ -52,6 +52,22 @@ const updateUser = async (req, res, next) => {
     }
 }
 
+const getOneUser = async (req, res) => {
+    const id = req.params.id;
+  
+    try {
+      let user = await User.findOne({
+        _id: id,
+      });
+      if (user) {
+        return res.json(user);
+      } else {
+        return res.status(404).send({ message: "No such user found" });
+      }
+    } catch (err) {
+      return res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
 
 const setProfilePic = async (req, res, next) => {
     try {
@@ -251,5 +267,6 @@ export default {
     totalUsers,
     getAllUsers,
     searchUser,
-    assignHotels
+    assignHotels,
+    getOneUser
 }
