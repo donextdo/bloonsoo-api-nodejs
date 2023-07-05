@@ -75,6 +75,10 @@ const PoliciesSchema = new mongoose.Schema({
 
 
 const HotelSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     property_name: {
         type: String,
         required: true
@@ -154,6 +158,11 @@ const HotelSchema = new mongoose.Schema({
     is_open_to_bookings: {
         type: Boolean,
         default: false
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'active', 'inactive', 'rejected'],
+        default: 'pending'
     }
     
 }, {timestamps: true})
