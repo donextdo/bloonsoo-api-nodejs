@@ -114,7 +114,7 @@ const HotelSchema = new mongoose.Schema(
     },
     property_address: {
       type: AddressSchema,
-      // required: true
+      enum: ["Point"],
     },
     about: {
       type: String,
