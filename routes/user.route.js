@@ -54,4 +54,18 @@ router.patch(
     userController.assignHotels
 )
 
+router.post(
+    `${path}/wishList/:id`,
+    // AuthenticatedAdminMiddleware ,
+    userController.addWishList
+)
+
+router.delete(
+    `${path}/:id/wishList/:hotelId`,
+    // AuthenticatedAdminMiddleware ,
+    userController.deleteFromWishList
+)
+
+
+
 export default router

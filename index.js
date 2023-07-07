@@ -8,6 +8,7 @@ import authRoute from './routes/auth.route.js'
 import bookingRoute from './routes/booking.route.js'
 import userRoute from './routes/user.route.js'
 import commissionRoute from './routes/commission.route.js'
+// import reviewRouter from './routes/review.js'
 
 import sendEmail from "./utils/email/sendEmail.js";
 
@@ -26,7 +27,8 @@ const routes = [
     authRoute,
     bookingRoute,
     userRoute,
-    commissionRoute
+    commissionRoute,
+    // reviewRouter
 ]
 
 const app = new App(routes, port)
