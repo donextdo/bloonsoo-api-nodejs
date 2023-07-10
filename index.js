@@ -84,17 +84,30 @@ async function searchHotels(query) {
       }));
       console.log("Nearby Hotels:", nearbyHotels);
 
-      const matchedHotels = nearbyHotels.filter((nearbyHotel) => {
-        return hotels.some(
-          (hotel) =>
-            hotel.property_name
-              .toLowerCase()
-              .includes(nearbyHotel.property_name.toLowerCase()) ||
-            hotel.property_address.street_address
-              .toLowerCase()
-              .includes(query.toLowerCase())
-        );
-      });
+      const matchedHotels = nearbyHotels
+        .map((nearbyHotel) => {
+          const matchedHotel = hotels.find(
+            (hotel) =>
+              hotel.property_name
+                .toLowerCase()
+                .includes(nearbyHotel.property_name.toLowerCase()) ||
+              hotel.property_address.street_address
+                .toLowerCase()
+                .includes(query.toLowerCase())
+          );
+
+          if (matchedHotel) {
+            return {
+              property_name: matchedHotel.property_name,
+              city: matchedHotel.property_address.city,
+              street_address: matchedHotel.property_address.street_address,
+              id: matchedHotel._id,
+            };
+          }
+
+          return null;
+        })
+        .filter(Boolean);
       console.log("Matched Hotels:", matchedHotels);
       return matchedHotels;
     } else {
@@ -102,6 +115,7 @@ async function searchHotels(query) {
         property_name: hotel.property_name,
         city: hotel.property_address.city,
         street_address: hotel.property_address.street_address,
+        id: hotel._id,
       }));
 
       console.log("Search Results:", searchResults);
