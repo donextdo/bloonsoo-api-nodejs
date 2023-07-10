@@ -1,18 +1,27 @@
 import { Router } from 'express'
-import reviewController from '../controllers/review.js'
 
+
+import {
+    addReview,
+    getAllReview,
+    getReviewById,
+    getOneReviewByhotelId ,
+    getRating,
+    updateReviews,
+    deleteReviews
+  } from "../controllers/review.js";
 
 const router = Router()
 
 const path = '/review'
 
-let reviewController = require("../controllers/review");
 
-router.post(`${path}/insert`, reviewController.addReview);
-router.get("/", reviewController.getAllReview);
-router.get("/:id", reviewController.getReviewById);
-router.get("/getReview/:productId", reviewController.getOneReviewByProductId);
-router.get("/getRating/:productId", reviewController.getRating);
-router.put("/:id", reviewController.updateReviews);
-router.delete("/:id", reviewController.deleteReviews);
+
+router.post(`${path}/insert`, addReview);
+router.get(path, getAllReview);
+router.get(`${path}/:id`, getReviewById);
+router.get(`${path}/getReview/:hotelId`, getOneReviewByhotelId);
+router.get(`${path}/getRating/:productId`, getRating);
+router.put(`${path}/:id`, updateReviews);
+router.delete(`${path}/:id`, deleteReviews);
 export default router

@@ -1,11 +1,11 @@
-const { request } = require("express");
-const Review = require("../models/review");
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+
+import Review from "../models/review.js"
+// import jwt from "jsonwebtoken";
+import User from "../models/user.js";
 
 
 
-const addReview = async (req, res) => {
+export const addReview = async (req, res) => {
   const hotelId = req.body.hotelId;
   const userId = req.body.userId;
   const name = req.body.name;
@@ -35,21 +35,21 @@ const addReview = async (req, res) => {
     isHelpfulFeedback,
   });
   try {
-    const token = req.headers.authorization;
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    // const token = req.headers.authorization;
+    // if (!token) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
 
-    // Verify and decode the token
-    const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
-    const userEmail = decodedToken.data;
+    // // Verify and decode the token
+    // const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
+    // const userEmail = decodedToken.data;
 
-    // Find the user based on the email
-     let user = await User.findOne({ email: userEmail });
+    // // Find the user based on the email
+    //  let user = await User.findOne({ email: userEmail });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    // if (!user) {
+    //   return res.status(404).json({ message: "User not found" });
+    // }
     
     let response = await review.save();
     if (response) {
@@ -63,7 +63,7 @@ const addReview = async (req, res) => {
   }
 };
 
-const getAllReview = async (req, res) => {
+export const getAllReview = async (req, res) => {
   try {
     let reviews = await Review.find();
     if (reviews) {
@@ -78,7 +78,7 @@ const getAllReview = async (req, res) => {
   }
 };
 
-const getReviewById = async (req, res) => {
+export const getReviewById = async (req, res) => {
   const product = req.params.id;
   try {
     let response = await Review.findById(product);
@@ -93,12 +93,12 @@ const getReviewById = async (req, res) => {
   }
 };
 
-const getOneReviewByProductId = async (req, res) => {
-  const productId = req.params.productId;
+export const getOneReviewByhotelId = async (req, res) => {
+  const hotelId = req.params.hotelId;
 
   try {
     let review = await Review.find({
-      productId: productId,
+      hotelId: hotelId,
     });
     if (review) {
       return res.json(review);
@@ -110,7 +110,7 @@ const getOneReviewByProductId = async (req, res) => {
   }
 };
 
-const getRating = async (req, res) => {
+export const getRating = async (req, res) => {
   const productId = req.params.productId;
 
   try {
@@ -130,7 +130,7 @@ const getRating = async (req, res) => {
   }
 };
 
-const updateReviews = async (req, res) => {
+export const updateReviews = async (req, res) => {
   const reviewId = req.params.id;
 
   const reviews = await Review.findOne({ _id: reviewId });
@@ -169,7 +169,7 @@ const updateReviews = async (req, res) => {
   }
 };
 
-const deleteReviews = async (req, res) => {
+export const deleteReviews = async (req, res) => {
   const Id = req.params.id;
   try {
     const response = await Product.findByIdAndDelete({ _id: Id });
@@ -186,12 +186,4 @@ const deleteReviews = async (req, res) => {
   }
 };
 
-module.exports = {
-  addReview,
-  getAllReview,
-  getReviewById,
-  getOneReviewByProductId,
-  getRating,
-  updateReviews,
-  deleteReviews,
-};
+

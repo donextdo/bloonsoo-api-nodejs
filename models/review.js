@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const { Schema } = mongoose;
+import mongoose from "mongoose";
 
-const ReviewSchema = new Schema({
+
+const ReviewSchema = new mongoose.Schema({
   hotelId: {
     type: String,
     // required: true,
@@ -54,7 +54,8 @@ const ReviewSchema = new Schema({
 
 const Reviews = mongoose.model("review", ReviewSchema);
 
-module.exports = Reviews;
+export default Reviews;
+
 
 // product_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
 // user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
