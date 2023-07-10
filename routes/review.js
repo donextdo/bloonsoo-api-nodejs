@@ -16,7 +16,6 @@ const router = Router()
 const path = '/review'
 
 
-
 router.post(`${path}/insert`, addReview);
 router.get(path, getAllReview);
 router.get(`${path}/:id`, getReviewById);
