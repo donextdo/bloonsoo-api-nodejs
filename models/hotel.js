@@ -1,163 +1,192 @@
-import mongoose from 'mongoose'
-
+import mongoose from "mongoose";
 
 const AddressSchema = new mongoose.Schema({
-    street_address: {
-        type: String,
-        // required: true
-    },
-    country: {
-        type: String,
-        // required: true
-    },
-    postal_code: {
-        type: String,
-        // required: true
-    }
-})
+  street_address: {
+    type: String,
+    // required: true
+  },
+
+  city: {
+    type: String,
+  },
+
+  country: {
+    type: String,
+    // required: true
+  },
+  postal_code: {
+    type: String,
+    // required: true
+  },
+});
 
 const ParkingSchema = new mongoose.Schema({
-    parking_type: {
-        type: String
-    },
-    parking_type_2: {
-        type: String
-    },
-    parking_type_3: {
-        type: String
-    },
-    reservation: {
-        type: Boolean
-    },
-    parking_price: {
-        type: String
-    }
-})
+  parking_type: {
+    type: String,
+  },
+  parking_type_2: {
+    type: String,
+  },
+  parking_type_3: {
+    type: String,
+  },
+  reservation: {
+    type: Boolean,
+  },
+  parking_price: {
+    type: String,
+  },
+});
 
 const ExtraBedSchema = new mongoose.Schema({
-    no_of_beds: {
-        type: Number
+  no_of_beds: {
+    type: Number,
+  },
+  accommodate_guests: [
+    {
+      type: String,
     },
-    accommodate_guests: [{
-        type: String
-    }]
-})
+  ],
+});
 
 const PoliciesSchema = new mongoose.Schema({
-    cancellation_duration: {
-        type: Number
-    },
-    pay_time: {
-        type: String
-    },
-    preventAccidental_bookings: {
-        type: Boolean
-    },
-    check_in_form: {
-        type: String
-    },
-    check_in_untill: {
-        type: String
-    },
-    check_out_form: {
-        type: String
-    },
-    check_out_untill: {
-        type: String
-    },
-    accommodate_children: {
-        type: Boolean
-    },
-    pets: {
-        type: Boolean
-    }
-})
+  cancellation_duration: {
+    type: Number,
+  },
+  pay_time: {
+    type: String,
+  },
+  preventAccidental_bookings: {
+    type: Boolean,
+  },
+  check_in_form: {
+    type: String,
+  },
+  check_in_untill: {
+    type: String,
+  },
+  check_out_form: {
+    type: String,
+  },
+  check_out_untill: {
+    type: String,
+  },
+  accommodate_children: {
+    type: Boolean,
+  },
+  pets: {
+    type: Boolean,
+  },
+});
 
-
-const HotelSchema = new mongoose.Schema({
+const HotelSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     property_name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     star_rating: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
-    contact_name:  {
-        type: String,
-        required: true
+    contact_name: {
+      type: String,
+      required: true,
     },
     contact_phone_number: {
-        type: String,
-        // required: true
+      type: String,
+      // required: true
     },
     contact_phone_number_alternative: {
-        type: String,
+      type: String,
     },
     is_own_multiple_hotels: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     use_channel_manager: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     property_address: {
-        type: AddressSchema,
-        // required: true
+      type: AddressSchema,
+      enum: ["Point"],
     },
     about: {
-        type: String
+      type: String,
     },
-    rooms: [{
+    rooms: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Room'
-    }],
+        ref: "Room",
+      },
+    ],
     cover_image: {
-        type: String
+      type: String,
     },
-    gallery_images: [{
-        type: String
-    }],
+    gallery_images: [
+      {
+        type: String,
+      },
+    ],
     parking: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     parking_details: {
-        type: ParkingSchema,
+      type: ParkingSchema,
     },
     breakfast: {
-        type: Boolean
+      type: Boolean,
     },
-    languages: [{
-        type: String
-    }],
-    facilities: [{
-        type: String
-    }],
+    languages: [
+      {
+        type: String,
+      },
+    ],
+    facilities: [
+      {
+        type: String,
+      },
+    ],
     extra_beds: {
-        type: Boolean
+      type: Boolean,
     },
     extra_beds_options: {
-        type: ExtraBedSchema
+      type: ExtraBedSchema,
     },
-    amenities: [{
-        type: String
-    }],
+    amenities: [
+      {
+        type: String,
+      },
+    ],
     policies: {
-        type: PoliciesSchema
+      type: PoliciesSchema,
     },
     credit_card_options: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     is_open_to_bookings: {
-        type: Boolean,
-        default: false
-    }
-    
-}, {timestamps: true})
+      type: Boolean,
+      default: false,
+    },
+    special_commission: {
+      type:Number
+    },
+    status: {
+      type: String,
+      enum: ["pending", "active", "inactive", "rejected"],
+      default: "pending",
+    },
+  },
+  { timestamps: true }
+);
 
 const Hotel = mongoose.model("Hotel", HotelSchema);
 
-export default Hotel
+export default Hotel;
