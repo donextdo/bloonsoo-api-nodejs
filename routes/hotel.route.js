@@ -26,6 +26,7 @@ import {
   updateHotel,
   searchHotelByName,
   searchBySocket,
+  specialCommissionHotel
 } from "../controllers/hotel.js";
 
 import {
@@ -74,6 +75,12 @@ router.patch(
   `${path}/inactive/:id`,
   AuthenticatedAdminMiddleware,
   inactiveHotel
+);
+
+router.patch(
+  `${path}/specialCommissionHotel/:id`,
+  AuthenticatedAdminMiddleware,
+  specialCommissionHotel
 );
 
 router.delete(`${path}/:id`, AuthenticatedAdminMiddleware, deleteHotel);

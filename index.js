@@ -47,13 +47,23 @@ async function searchHotels(query) {
       console.error("Products not found in API response.");
       return [];
     }
-    const filteredHotels = hotels.filter(
-      (hotel) =>
-        hotel.property_address.street_address
-          .toLowerCase()
-          .includes(query.toLowerCase()) ||
-        hotel.property_name.toLowerCase().includes(query.toLowerCase())
-    );
+    // const filteredHotels = hotels.filter(
+    //   (hotel) =>
+    //     hotel.property_address.street_address
+    //       .toLowerCase()
+    //       .includes(query.toLowerCase()) ||
+    //     hotel.property_name.toLowerCase().includes(query.toLowerCase())
+    // );
+    const filteredHotels = hotels.filter((hotel) => {
+      const streetAddress =
+        hotel.property_address?.street_address?.toLowerCase() || "";
+      const propertyName = hotel.property_name?.toLowerCase() || "";
+
+      return (
+        streetAddress.includes(query.toLowerCase()) ||
+        propertyName.includes(query.toLowerCase())
+      );
+    });
 
     if (filteredHotels.length === 0) {
       const locationCoordinates = await getCoordinates(query);

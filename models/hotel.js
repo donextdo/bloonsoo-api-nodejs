@@ -175,6 +175,9 @@ const HotelSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    special_commission: {
+      type:Number
+    },
     status: {
       type: String,
       enum: ["pending", "active", "inactive", "rejected"],

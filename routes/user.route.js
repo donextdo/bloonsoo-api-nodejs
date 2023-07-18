@@ -12,6 +12,12 @@ const path = '/user'
 router.patch(`${path}/:id`, AuthenticatedUserMiddleware, userController.updateUser)
 
 router.get(
+    `${path}/get-all-users`,
+    AuthenticatedAdminMiddleware ,
+    userController.getAllUsers
+)
+
+router.get(
     `${path}/:id`,
     AuthenticatedUserMiddleware ,
     userController.getOneUser
@@ -37,10 +43,12 @@ router.get(
 )
 
 router.get(
-    `${path}/get-all-users`,
-    AuthenticatedAdminMiddleware ,
-    userController.getAllUsers
+    `${path}/active-users/count`,
+    AuthenticatedHotelAdminMiddleware ,
+    userController.activeUserCount
 )
+
+
 
 router.post(
     `${path}/search-user`,

@@ -42,7 +42,7 @@ export const AuthenticatedMiddleware = async (req, res, next) => {
 
 export const AuthenticatedUserMiddleware = async (req, res, next) => {
     AuthenticatedMiddleware(req, res, () => {
-
+        console.log("aaaa")
         if(req.user._id.toString() === req.params.id || req.user.role === 'admin') {
             next()
         }

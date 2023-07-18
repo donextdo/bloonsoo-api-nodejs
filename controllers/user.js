@@ -53,6 +53,7 @@ const updateUser = async (req, res, next) => {
 }
 
 const getOneUser = async (req, res) => {
+    
     const id = req.params.id;
   
     try {
@@ -65,6 +66,7 @@ const getOneUser = async (req, res) => {
         return res.status(404).send({ message: "No such user found" });
       }
     } catch (err) {
+        
       return res.status(500).send({ message: "Internal Server Error" });
     }
   }
@@ -166,10 +168,12 @@ const addHotelAdmin = async (req, res, next) => {
 
 
 const totalUsers = async (req, res, next) => {
+
     try {
         const count = await User.countDocuments()
-
+        console.log("usercount",count)
         res.status(200).json(count)
+
     }
     catch (error) {
         next(error)
@@ -177,17 +181,33 @@ const totalUsers = async (req, res, next) => {
 }
 
 
-const getAllUsers = async (req, res, next) => {
+const getAllUsers = async (req, res) => {
+
     try {
+   
         
         const users = await User.find()
 
         res.status(200).json(users)
 
     } catch (error) {
-        next(error)
+        console.log(error)
+        res.status(500).json(error.message)
+        
     }
 }
+
+export const activeUserCount = async (req, res, next) => {
+    try {
+      const count = await User.countDocuments({
+        status: "active",
+      });
+  
+      res.status(200).json(count);
+    } catch (error) {
+      next(error);
+    }
+  };
 
 const searchUser = async (req, res, next) => {
     try {
@@ -318,5 +338,6 @@ export default {
     assignHotels,
     getOneUser,
     addWishList,
-    deleteFromWishList
+    deleteFromWishList,
+    activeUserCount
 }

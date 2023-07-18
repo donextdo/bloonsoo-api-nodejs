@@ -240,7 +240,7 @@ export const approveHotel = async (req, res, next) => {
       hotel.user,
       {
         $set: {
-          role: "hotel-admin",
+          role: "admin",
         },
       },
       {
@@ -332,6 +332,8 @@ export const deleteHotel = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
 
 export const publishHotel = async (req, res, next) => {
   try {
@@ -568,4 +570,34 @@ export const searchBySocket = async (req, res) => {
 
   // Send the search query to the server
   socket.emit("search", query);
+};
+
+export const specialCommissionHotel = async (req, res, next) => {
+  try {
+    const hotel = await Hotel.findById(req.params.id);
+
+    if (!hotel)
+      return res.status(404).json({
+        code: "NOT_FOUND",
+        message: `cannot find hotel with id ${req.params.id}`,
+      });
+
+    await Hotel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          special_commission: req.body.special_commission,
+        },
+      },
+      {
+        runValidators: true,
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
