@@ -52,6 +52,24 @@ const updateUser = async (req, res, next) => {
     }
 }
 
+const getOneUser = async (req, res) => {
+    
+    const id = req.params.id;
+  
+    try {
+      let user = await User.findOne({
+        _id: id,
+      });
+      if (user) {
+        return res.json(user);
+      } else {
+        return res.status(404).send({ message: "No such user found" });
+      }
+    } catch (err) {
+        
+      return res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
 
 const setProfilePic = async (req, res, next) => {
     try {
@@ -150,10 +168,12 @@ const addHotelAdmin = async (req, res, next) => {
 
 
 const totalUsers = async (req, res, next) => {
+
     try {
         const count = await User.countDocuments()
-
+        console.log("usercount",count)
         res.status(200).json(count)
+
     }
     catch (error) {
         next(error)
@@ -161,17 +181,33 @@ const totalUsers = async (req, res, next) => {
 }
 
 
-const getAllUsers = async (req, res, next) => {
+const getAllUsers = async (req, res) => {
+
     try {
+   
         
         const users = await User.find()
 
         res.status(200).json(users)
 
     } catch (error) {
-        next(error)
+        console.log(error)
+        res.status(500).json(error.message)
+        
     }
 }
+
+export const activeUserCount = async (req, res, next) => {
+    try {
+      const count = await User.countDocuments({
+        status: "active",
+      });
+  
+      res.status(200).json(count);
+    } catch (error) {
+      next(error);
+    }
+  };
 
 const searchUser = async (req, res, next) => {
     try {
@@ -243,6 +279,54 @@ const assignHotels = async (req, res, next) => {
     }
 }
 
+const addWishList = async (req, res) => {
+    try {
+  
+      const user = await User.findById(req.params.id);
+      console.log("user", user);
+      const hotels = req.body.whishList;
+  
+      const hotelList = hotels.map((p) => ({
+        hotelId: p.hotelId,
+        image: p.image,
+        title: p.title,
+        address: p.address,
+        
+      }));
+  
+      user.whishList.push(...hotelList);
+  
+      await user.save();
+  
+      res.status(200).json({ message: "Hotel added to wishlist" });
+    } catch (err) {
+      console.error(err);
+      if (err.name === "TokenExpiredError") {
+        return res.status(401).json({ message: "Token expired" });
+      }else{
+        console.log("error is $err", err);
+      }
+      res.status(500).json({ message: "Server error" });
+    }
+  };
+
+  const deleteFromWishList = async (req, res) => {
+    try {
+      const user = await User.findById(req.params.id);
+  
+      // Remove the product from the wishlist array
+      user.whishList = user.whishList.filter(
+        (product) => product.productId !== req.params.productId
+      );
+  
+      await user.save();
+  
+      res.status(200).json({ message: "Product removed from wishlist" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
 
 export default {
     updateUser,
@@ -251,5 +335,9 @@ export default {
     totalUsers,
     getAllUsers,
     searchUser,
-    assignHotels
+    assignHotels,
+    getOneUser,
+    addWishList,
+    deleteFromWishList,
+    activeUserCount
 }

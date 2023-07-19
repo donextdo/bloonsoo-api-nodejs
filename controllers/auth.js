@@ -30,11 +30,13 @@ const bloonsoWeb = process.env.BLOONSOO_WEB
 
 
 const signup = async (req, res, next) => {
+
     try {
+        console.log(req)
         passport.authenticate('signup', {session: false}, async function (err, user, info) {
-
+            
             if (err || !user) {
-
+                
                 if (err.code && err.code === 11000) {
                     return res.status(400).json({
                         isRegistered: false,

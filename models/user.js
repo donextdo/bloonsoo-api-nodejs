@@ -77,7 +77,8 @@ const UserSchema = new mongoose.Schema(
         isProfileComplete: {
             type: Boolean,
             default: false
-        }
+        },
+        whishList: [],
     },
     {
         timestamps: true

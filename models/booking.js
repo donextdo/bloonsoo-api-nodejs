@@ -39,7 +39,7 @@ const BookingSchema = mongoose.Schema({
         default: 0
     },
     payment_method: {
-        type: Number
+        type: String
     },
     is_travelling_for_work: {
         type: Boolean

@@ -30,14 +30,17 @@ const bloonsoWeb = process.env.BLOONSOO_WEB
 
 const addBooking = async (req, res, next) => {
     try {
-        
+
         const user_id = req.user._id.toString()
         const commissionRate = await CommissionRate.find()
 
         const RATE = commissionRate[0].commission_rate
 
-        const totalAmount = req.body.total 
-        const amount = parseInt(totalAmount.split(' ')[1]) 
+        const totalAmount = req.body.total
+
+        // const amount = parseInt(totalAmount.split(' ')[1]) 
+        const amount = totalAmount
+
 
         const commission = amount * (RATE / 100)
 
@@ -59,33 +62,37 @@ const addBooking = async (req, res, next) => {
 
         const booking = await newBooking.save()
 
-        let bookedRooms = req.body.bookings 
-
-        bookedRooms = bookedRooms.map(bookedRoom => {
-            return {
-                room_id: bookedRoom.id,
-                room_type: bookedRoom.roomType,
-                room_name: bookedRoom.roomName,
-                booking_id: booking._id,
-                check_in: bookedRoom.checkInDate,
-                check_out: bookedRoom.checkOutDate,
-                nights: bookedRoom.nights,
-                adults: bookedRoom.adults,
-                children: bookedRoom.children,
-                rooms: bookedRoom.rooms,
-                total: bookedRoom.totalPrice
-            }
-        })
-
+        let bookedRooms = req.body.bookings
+        console.log(bookedRooms)
+        try {
+            bookedRooms = bookedRooms.map(bookedRoom => {
+                return {
+                    room_id: bookedRoom.id,
+                    room_type: bookedRoom.roomType,
+                    room_name: bookedRoom.roomName,
+                    booking_id: booking._id,
+                    check_in: bookedRoom.checkInDate,
+                    check_out: bookedRoom.checkOutDate,
+                    nights: bookedRoom.nights,
+                    adults: bookedRoom.adults,
+                    children: bookedRoom.children,
+                    rooms: bookedRoom.rooms,
+                    total: bookedRoom.totalPrice
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
+        console.log("hi")
         const hotel = await Hotel.findById(req.body.hotel_id)
 
         const hotelAdmin = await User.findById(hotel.user)
 
         await BookedRoom.create(bookedRooms)
 
-        const data = { 
-            customerName: req.body.full_name, 
-            bookind_id: booking._id, 
+        const data = {
+            customerName: req.body.full_name,
+            bookind_id: booking._id,
             property_name: hotel.property_name,
             total: req.body.total,
             url: bloonsoWeb
@@ -93,15 +100,15 @@ const addBooking = async (req, res, next) => {
         const renderedTemplate = ejs.render(bookingTemplateClient, data);
 
         await sendEmail(
-            `Booking Confirmation: ${booking._id}`, 
+            `Booking Confirmation: ${booking._id}`,
             req.body.email,
             renderedTemplate
         )
 
-        const dataHotelEmail = { 
+        const dataHotelEmail = {
             property_name: hotel.property_name,
-            customerName: req.body.full_name, 
-            bookind_id: booking._id, 
+            customerName: req.body.full_name,
+            bookind_id: booking._id,
             commission: commission,
             total: req.body.total,
             url: bloonsoAdminBooking
@@ -110,7 +117,7 @@ const addBooking = async (req, res, next) => {
         const renderedTemplateHotel = ejs.render(bookingTemplateHotel, dataHotelEmail);
 
         const email = await sendEmail(
-            `New Booking: ${booking._id}`, 
+            `New Booking: ${booking._id}`,
             hotelAdmin.email,
             renderedTemplateHotel
         )
@@ -128,11 +135,35 @@ const addBooking = async (req, res, next) => {
 }
 
 
-const getAllBookings = async(req, res, next) => {
+const getAllBookings = async (req, res, next) => {
     try {
-        
-        if(req.user.role === 'admin') {
+
+        if (req.user.role === 'admin') {
             const bookings = await Booking.find()
+                .populate({
+                    path: 'hotel_id',
+                    select: 'property_name'
+                })
+                .populate({
+                    path: 'user_id',
+                    select: ['firstName', 'lastName', 'email', 'username']
+                })
+                .populate('booked_rooms')
+                .sort({ _id: -1 })
+            return res.status(200).json(bookings)
+        }
+
+        const userHotels = await Hotel.find({
+            user: req.user._id.toString()
+        })
+
+        const hotelIds = userHotels.map(hotel => (hotel._id))
+
+        const bookings = await Booking.find(
+            {
+                hotel_id: { $in: hotelIds }
+            }
+        )
             .populate({
                 path: 'hotel_id',
                 select: 'property_name'
@@ -142,31 +173,7 @@ const getAllBookings = async(req, res, next) => {
                 select: ['firstName', 'lastName', 'email', 'username']
             })
             .populate('booked_rooms')
-            .sort({_id: -1})
-            return res.status(200).json(bookings)
-        }
-
-        const userHotels = await Hotel.find({
-            user: req.user._id.toString() 
-        })
-
-        const hotelIds = userHotels.map(hotel => (hotel._id))
-
-        const bookings = await Booking.find(
-            {
-                hotel_id: { $in: hotelIds }   
-            }
-        )
-        .populate({
-            path: 'hotel_id',
-            select: 'property_name'
-        })
-        .populate({
-            path: 'user_id',
-            select: ['firstName', 'lastName', 'email', 'username']
-        })
-        .populate('booked_rooms')
-        .sort({_id: -1})
+            .sort({ _id: -1 })
 
         res.status(200).json(bookings)
 
@@ -178,16 +185,16 @@ const getAllBookings = async(req, res, next) => {
 }
 
 
-const getMyBookings = async(req, res, next) => {
+const getMyBookings = async (req, res, next) => {
     try {
-        
+
         const bookings = await Booking.find({
             user_id: req.user._id.toString()
         }).populate({
             path: 'hotel_id',
             select: ['property_name', 'property_address']
         }).populate('booked_rooms')
-        .sort({_id: -1})
+            .sort({ _id: -1 })
 
         res.status(200).json(bookings)
 
@@ -201,7 +208,7 @@ const getMyBookings = async(req, res, next) => {
 
 const getBookingById = async (req, res, next) => {
     try {
-        
+
         const id = req.params.id
 
         const booking = Booking.findById(id).populate({
@@ -209,7 +216,7 @@ const getBookingById = async (req, res, next) => {
             select: 'property_name'
         })
 
-        if(booking.user_id !== req.user._id.toString())
+        if (booking.user_id !== req.user._id.toString())
             return res.status(403).json({
                 code: 'UNAUTHORIZED',
                 message: 'You are not allowed to do this'
@@ -234,12 +241,12 @@ const getBookingById = async (req, res, next) => {
 
 const approveBooking = async (req, res, next) => {
     try {
-        const id = req.params.id 
+        const id = req.params.id
         const user_id = req.user._id.toString()
 
         const bookingExist = await Booking.findById(id)
 
-        if(!bookingExist) {
+        if (!bookingExist) {
             throw new NotFoundError('BOOKING_NOT_FOUND')
         }
 
@@ -256,8 +263,8 @@ const approveBooking = async (req, res, next) => {
             }
         )
 
-        const totalAmount = booking.total 
-        const amount = parseInt(totalAmount.split(' ')[1]) 
+        const totalAmount = booking.total
+        const amount = parseInt(totalAmount.split(' ')[1])
 
         const newCommission = new Commission({
             hotel_id: booking.hotel_id,
@@ -272,9 +279,9 @@ const approveBooking = async (req, res, next) => {
 
         const hotel = await Hotel.findById(booking.hotel_id)
 
-        const data = { 
-            customerName: booking.full_name, 
-            bookind_id: booking._id, 
+        const data = {
+            customerName: booking.full_name,
+            bookind_id: booking._id,
             property_name: hotel.property_name,
             total: booking.total,
             url: bloonsoWeb
@@ -282,7 +289,7 @@ const approveBooking = async (req, res, next) => {
         const renderedTemplate = ejs.render(bookingApproved, data);
 
         await sendEmail(
-            `Booking Approved: ${booking._id}`, 
+            `Booking Approved: ${booking._id}`,
             booking.email,
             renderedTemplate
         )
@@ -300,11 +307,11 @@ const approveBooking = async (req, res, next) => {
 
 const cancelBooking = async (req, res, next) => {
     try {
-        const id = req.params.id 
+        const id = req.params.id
 
         const bookingExist = await Booking.findById(id)
 
-        if(!bookingExist) {
+        if (!bookingExist) {
             throw new NotFoundError('BOOKING_NOT_FOUND')
         }
 
@@ -323,14 +330,14 @@ const cancelBooking = async (req, res, next) => {
 
         const hotel = await Hotel.findById(booking.hotel_id)
 
-        const data = { 
-            customerName: booking.full_name, 
+        const data = {
+            customerName: booking.full_name,
             property_name: hotel.property_name
         };
         const renderedTemplate = ejs.render(bookingReject, data);
 
         await sendEmail(
-            `Booking Rejected: ${booking._id}`, 
+            `Booking Rejected: ${booking._id}`,
             booking.email,
             renderedTemplate
         )
@@ -346,26 +353,26 @@ const cancelBooking = async (req, res, next) => {
 }
 
 
-const getBookingCount = async(req, res, next) => {
+const getBookingCount = async (req, res, next) => {
     try {
-        
-        if(req.user.role === 'admin') {
+
+        if (req.user.role === 'admin') {
             const bookings = await Booking.countDocuments({
                 status: 1
             })
-            
+
             return res.status(200).json(bookings)
         }
 
         const userHotels = await Hotel.find({
-            user: req.user._id.toString() 
+            user: req.user._id.toString()
         })
 
         const hotelIds = userHotels.map(hotel => (hotel._id))
 
         const bookings = await Booking.countDocuments(
             {
-                hotel_id: { $in: hotelIds } ,
+                hotel_id: { $in: hotelIds },
                 status: 1
             }
         )

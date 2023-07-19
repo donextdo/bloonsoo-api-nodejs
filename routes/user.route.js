@@ -11,6 +11,18 @@ const path = '/user'
 
 router.patch(`${path}/:id`, AuthenticatedUserMiddleware, userController.updateUser)
 
+router.get(
+    `${path}/get-all-users`,
+    AuthenticatedAdminMiddleware ,
+    userController.getAllUsers
+)
+
+router.get(
+    `${path}/:id`,
+    AuthenticatedUserMiddleware ,
+    userController.getOneUser
+)
+
 router.patch(
     `${path}/profilepic/:id`, 
     AuthenticatedUserMiddleware, 
@@ -31,10 +43,12 @@ router.get(
 )
 
 router.get(
-    `${path}/get-all-users`,
-    AuthenticatedAdminMiddleware ,
-    userController.getAllUsers
+    `${path}/active-users/count`,
+    AuthenticatedHotelAdminMiddleware ,
+    userController.activeUserCount
 )
+
+
 
 router.post(
     `${path}/search-user`,
@@ -47,5 +61,19 @@ router.patch(
     AuthenticatedAdminMiddleware,
     userController.assignHotels
 )
+
+router.post(
+    `${path}/wishList/:id`,
+    // AuthenticatedAdminMiddleware ,
+    userController.addWishList
+)
+
+router.delete(
+    `${path}/:id/wishList/:hotelId`,
+    // AuthenticatedAdminMiddleware ,
+    userController.deleteFromWishList
+)
+
+
 
 export default router
