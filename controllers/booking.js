@@ -262,6 +262,8 @@ const approveBooking = async (req, res, next) => {
                 runValidators: true
             }
         )
+        console.log(booking)
+        console.log("aaaaa")
 
         const totalAmount = booking.total
         const amount = parseInt(totalAmount.split(' ')[1])
@@ -270,7 +272,7 @@ const approveBooking = async (req, res, next) => {
             hotel_id: booking.hotel_id,
             user_id: user_id,
             booking_id: booking._id,
-            booking_amount: amount,
+            booking_amount: booking.total,
             commission_rate: booking.commission_rate,
             commission: booking.commission
         })
@@ -300,6 +302,8 @@ const approveBooking = async (req, res, next) => {
         })
     }
     catch (error) {
+        console.log("bbbb")
+        console.log(error)
         next(error)
     }
 }
