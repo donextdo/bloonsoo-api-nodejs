@@ -26,7 +26,8 @@ import {
   updateHotel,
   searchHotelByName,
   searchBySocket,
-  specialCommissionHotel
+  specialCommissionHotel,
+  inactiveHotelCount
 } from "../controllers/hotel.js";
 
 import {
@@ -107,6 +108,11 @@ router.get(
   activeHotelCount
 );
 
+router.get(
+  `${path}/get/inactive/count`,
+  AuthenticatedMiddleware,
+  inactiveHotelCount
+);
 router.get(
   `${path}/get/user-not-exist/list`,
   AuthenticatedAdminMiddleware,

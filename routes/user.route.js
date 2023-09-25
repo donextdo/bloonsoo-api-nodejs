@@ -9,7 +9,9 @@ const uploadOptions = multer({storage: profileStorage})
 
 const path = '/user'
 
-router.patch(`${path}/:id`, AuthenticatedUserMiddleware, userController.updateUser)
+router.patch(`${path}/:id`,
+AuthenticatedHotelAdminMiddleware,
+  userController.updateUser)
 
 router.get(
     `${path}/get-all-users`,
@@ -74,6 +76,34 @@ router.delete(
     userController.deleteFromWishList
 )
 
+router.patch(
+    `${path}/user-admin/:id`,
+    AuthenticatedAdminMiddleware,
+    userController.setAdminUser
+)
 
+router.patch(
+    `${path}/user-hotel-admin/:id`,
+    AuthenticatedAdminMiddleware,
+    userController.setHotelAdminUser
+)
+
+router.patch(
+    `${path}/activeUser/:id`,
+    AuthenticatedHotelAdminMiddleware,
+    userController.activeUser
+)
+
+router.patch(
+    `${path}/inactiveUser/:id`,
+    AuthenticatedHotelAdminMiddleware,
+    userController.inactiveUser
+)
+
+router.delete(
+    `${path}/deleteUser/:id`,
+    AuthenticatedHotelAdminMiddleware,
+    userController.deleteUser
+)
 
 export default router

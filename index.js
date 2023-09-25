@@ -13,6 +13,8 @@ import http from "http";
 import axios from "axios";
 import sendEmail from "./utils/email/sendEmail.js";
 import reviewRouter from './routes/review.js'
+import offerRouter from './routes/offer.js'
+
 
 import("./utils/strategy.js");
 
@@ -30,7 +32,8 @@ const routes = [
   bookingRoute,
   userRoute,
   commissionRoute,
-  reviewRouter
+  reviewRouter,
+  offerRouter
 ];
 
 const app = new App(routes, port);
