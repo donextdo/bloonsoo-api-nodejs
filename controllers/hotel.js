@@ -316,6 +316,7 @@ export const inactiveHotel = async (req, res, next) => {
   }
 };
 
+
 export const deleteHotel = async (req, res) => {
   try {
     const hotel = await Hotel.findById(req.params.id);
@@ -462,6 +463,18 @@ export const activeHotelCount = async (req, res, next) => {
   try {
     const count = await Hotel.countDocuments({
       status: "active",
+    });
+
+    res.status(200).json(count);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const inactiveHotelCount = async (req, res, next) => {
+  try {
+    const count = await Hotel.countDocuments({
+      status: "inactive",
     });
 
     res.status(200).json(count);

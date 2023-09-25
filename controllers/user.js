@@ -328,6 +328,139 @@ const addWishList = async (req, res) => {
     }
   };
 
+  const inactiveUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user)
+            return res.status(404).json({
+                code: "NOT_FOUND",
+                message: `cannot find user with id ${req.params.id}`,
+            });
+
+        await User.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: {
+                    status: "inactive",
+                },
+            },
+
+        );
+
+        res.status(200).json({
+            success: true,
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const activeUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user)
+            return res.status(404).json({
+                code: "NOT_FOUND",
+                message: `cannot find user with id ${req.params.id}`,
+            });
+
+        await User.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: {
+
+                    status: "active",
+                },
+            },
+
+        );
+
+        res.status(200).json({
+            success: true,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const setAdminUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user)
+            return res.status(404).json({
+                code: "NOT_FOUND",
+                message: `Cannot find user with id ${req.params.id}`,
+            });
+
+        user.role = "admin"; // Update the user's role directly
+
+        await user.save(); // Save the updated user
+
+        res.status(200).json({
+            success: true,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        console.error(error);
+    }
+};
+
+const setHotelAdminUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user)
+            return res.status(404).json({
+                code: "NOT_FOUND",
+                message: `cannot find user with id ${req.params.id}`,
+            });
+
+        await User.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: {
+
+                    role: "hotel-admin",
+                },
+            },
+
+        );
+
+        res.status(200).json({
+            success: true,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const deleteUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user)
+            return res.status(404).json({
+                code: "NOT_FOUND",
+                message: `Cannot find user with id ${req.params.id}`,
+            });
+
+        await user.remove(); // Delete the user
+
+        res.status(200).json({
+            success: true,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        console.error(error);
+    }
+};
+
+
+
 export default {
     updateUser,
     setProfilePic,
@@ -339,5 +472,10 @@ export default {
     getOneUser,
     addWishList,
     deleteFromWishList,
-    activeUserCount
+    activeUserCount,
+    inactiveUser,
+    activeUser,
+    setAdminUser,
+    setHotelAdminUser,
+    deleteUser
 }

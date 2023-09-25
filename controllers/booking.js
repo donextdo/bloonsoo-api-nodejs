@@ -13,6 +13,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import dotenv from 'dotenv'
+import Payment from "../models/payment.js";
 
 dotenv.config()
 
@@ -390,6 +391,116 @@ const getBookingCount = async (req, res, next) => {
     }
 }
 
+export const PendingBookingCount = async (req, res, next) => {
+    try {
+        const count = await Booking.countDocuments({
+            status: 0,
+        });
+
+        res.status(200).json(count);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const RejectBookingCount = async (req, res, next) => {
+    try {
+        const count = await Booking.countDocuments({
+            status: 2,
+        });
+
+        res.status(200).json(count);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+const saveApprovedBookings = async (req, res, next) => {
+    try {
+
+        const newPayment = new Payment({
+
+            hotel_name: req.body.hotel_name,
+            total_sale_amount: req.body.total_sale_amount,
+            amount: req.body.amount,
+            bloonsoo_discount: req.body.bloonsoo_discount,
+            hotel_discount: req.body.hotel_discount,
+            commission_rate: req.body.commission_rate,
+            commission: req.body.commission,
+            date: new Date()
+        })
+
+        const savePayment = await newPayment.save()
+
+        res.status(201).json(savePayment)
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+const getAllPayments = async (req, res) => {
+    try {
+        const payments = await Payment.find()
+        res.status(200).json(payments);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const approvedPayment = async (req, res, next) => {
+    try {
+        const payment = await Payment.findById(req.params.id);
+
+        if (!payment)
+            return res.status(404).json({
+                code: "NOT_FOUND",
+                message: `cannot find payment with id ${req.params.id}`,
+            });
+
+        await Payment.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: {
+
+                    payment_status: "approved",
+                },
+            },
+
+        );
+
+        res.status(200).json({
+            success: true,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getApprovedPayment = async (req, res, next) => {
+    try {
+        const approvedBookings = await Payment.find({ payment_status: 'approved' }); // Adjust the field name as needed
+        res.status(200).json(approvedBookings);
+      } catch (error) {
+        res.status(500).json({ error: 'An error occurred while fetching approved bookings.' });
+      }
+   
+};
+
+const getPendingPayment = async (req, res, next) => {
+    try {
+        const approvedBookings = await Payment.find({ payment_status: 'pending' }); // Adjust the field name as needed
+        res.status(200).json(approvedBookings);
+      } catch (error) {
+        res.status(500).json({ error: 'An error occurred while fetching approved bookings.' });
+      }
+};
+
+
 
 export default {
     addBooking,
@@ -398,5 +509,12 @@ export default {
     getBookingById,
     approveBooking,
     cancelBooking,
-    getBookingCount
+    getBookingCount,
+    PendingBookingCount,
+    RejectBookingCount,
+    saveApprovedBookings,
+    approvedPayment,
+    getAllPayments,
+    getApprovedPayment,
+    getPendingPayment
 }
