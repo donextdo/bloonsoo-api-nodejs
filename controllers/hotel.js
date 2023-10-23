@@ -67,7 +67,7 @@ export const setCoverPhoto = async (req, res) => {
 
 export const addGalleryPhotos = async (req, res) => {
   const file = req.file;
-  console.log(file);
+  
   if (!file) {
     return res.status(400).json({ message: "Please add an image" });
   }
@@ -75,6 +75,7 @@ export const addGalleryPhotos = async (req, res) => {
   const imgPath = `${req.protocol}://${req.get("host")}/public/images/${
     file.filename
   }`;
+  
 
   try {
     const hotelExist = await Hotel.findById(req.params.id);
@@ -186,6 +187,7 @@ export const finalize = async (req, res) => {
 };
 
 export const getAllHotels = async (req, res) => {
+  console.log("bbbbbbbbbbbbbbbbbbbbbbb")
   try {
     const hotels = await Hotel.find({
       $and: [{ is_open_to_bookings: true }, { status: "active" }],
@@ -428,6 +430,7 @@ export const unPublishHotel = async (req, res, next) => {
 };
 
 export const getHotels = async (req, res, next) => {
+  console.log("hi")
   try {
     const hotels = await Hotel.find()
       .sort({
@@ -445,6 +448,9 @@ export const getHotels = async (req, res, next) => {
 };
 
 export const getMyHotels = async (req, res, next) => {
+  
+  console.log("user",req.user._id)
+  console.log("id",req._id)
   try {
     const hotels = await Hotel.find({
       user: req.user._id.toString(),

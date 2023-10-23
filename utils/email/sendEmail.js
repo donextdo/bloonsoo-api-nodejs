@@ -15,19 +15,22 @@ const transporter = nodemailer.createTransport({
 //Bloonsoo.com@@#&
 
 const sendEmail = async (subject, to, html) => {
+    
     try {
         let info = await transporter.sendMail({
             from: 'noreply@bloonsoo.com',
-            to: to, // list of receivers
+            to: 'manjitharock@gmail.com', // list of receivers
             subject: subject, // Subject line
             // text: "Hello world?", // plain text body
             html: html, // html body
         })
     
         logger.info("Message sent: %s", info);
+        console.log(info)
         return info
     }
     catch (error) {
+        console.log(error)
         logger.error(error)
     }
     

@@ -8,7 +8,8 @@ import {
     getRoomsByProperyId, 
     deleteRoom, 
     addGalleryPhotos, 
-    getRoomGroupsByType 
+    getRoomGroupsByType,
+    deleteGalleryPhoto 
 } from '../controllers/room.js'
 
 const uploadOptions = multer({storage: storage})
@@ -43,9 +44,14 @@ router.delete(
 )
 
 router.post(
-    `${path}/gallery`, 
+    `${path}/gallery/:id`, 
     uploadOptions.single('gallery_img'), 
     addGalleryPhotos
+)
+
+router.delete(
+    `${path}/gallery/delete/:id`, 
+    deleteGalleryPhoto
 )
 
 export default router

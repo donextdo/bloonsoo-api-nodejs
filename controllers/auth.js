@@ -319,11 +319,12 @@ const sendResetPasswordMail = async (req, res, next) => {
             userExit.email,
             renderedTemplate
         )
-
+        console.log(userExit.email)
         res.status(200).json({
             success: true,
             message: 'VERIFICATION_LINK_SENT'
         })
+        
 
     }
     catch (error) {
