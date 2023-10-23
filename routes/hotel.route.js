@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import multer from "multer";
 import storage from "../middleware/multerStorage.js";
+import file from "../middleware/file.js"
 
 import {
   createHotel,
@@ -53,14 +54,14 @@ router.patch(`${path}/facilities/:id`, AuthenticatedMiddleware, addFacilities);
 router.patch(
   `${path}/coverphoto/:id`,
   AuthenticatedMiddleware,
-  uploadOptions.single("cover_img"),
+  file.single("cover_img"),
   setCoverPhoto
 );
 
 router.patch(
   `${path}/gallery/:id`,
   AuthenticatedMiddleware,
-  uploadOptions.single("gallery_img"),
+  file.single("gallery_img"),
   addGalleryPhotos
 );
 

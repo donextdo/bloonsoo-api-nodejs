@@ -1,6 +1,7 @@
 import Hotel from "../models/hotel.js";
 import User from "../models/user.js";
 import socketIOClient from "socket.io-client";
+import FileService from "../middleware/s3.js";
 
 export const createHotel = async (req, res) => {
   const newHotel = new Hotel({
@@ -32,9 +33,12 @@ export const setCoverPhoto = async (req, res) => {
     return res.status(400).json({ message: "Please add an image" });
   }
 
-  const imgPath = `${req.protocol}://${req.get("host")}/public/images/${
-    file.filename
-  }`;
+  const imgURL = await FileService.uploadFile(req, res);
+  let imgPath = `https://bloonsoo-images-upload.s3.ap-southeast-1.amazonaws.com/${imgURL}`
+
+  // const imgPath = `${req.protocol}://${req.get("host")}/public/images/${
+  //   file.filename
+  // }`;
 
   const coverImg = {
     cover_image: imgPath,
@@ -72,9 +76,12 @@ export const addGalleryPhotos = async (req, res) => {
     return res.status(400).json({ message: "Please add an image" });
   }
 
-  const imgPath = `${req.protocol}://${req.get("host")}/public/images/${
-    file.filename
-  }`;
+  const imgURL = await FileService.uploadFile(req, res);
+  let imgPath = `https://bloonsoo-images-upload.s3.ap-southeast-1.amazonaws.com/${imgURL}`
+
+  // const imgPath = `${req.protocol}://${req.get("host")}/public/images/${
+  //   file.filename
+  // }`;
   
 
   try {

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import multer from 'multer'
 import storage from '../middleware/multerStorage.js'
+import file from "../middleware/file.js"
 
 import { 
     createRoom,
@@ -45,7 +46,7 @@ router.delete(
 
 router.post(
     `${path}/gallery/:id`, 
-    uploadOptions.single('gallery_img'), 
+    file.single('gallery_img'), 
     addGalleryPhotos
 )
 
