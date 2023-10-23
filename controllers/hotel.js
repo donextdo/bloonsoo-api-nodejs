@@ -36,9 +36,6 @@ export const setCoverPhoto = async (req, res) => {
   const imgURL = await FileService.uploadFile(req, res);
   let imgPath = `https://bloonsoo-images-upload.s3.ap-southeast-1.amazonaws.com/${imgURL}`
 
-  // const imgPath = `${req.protocol}://${req.get("host")}/public/images/${
-  //   file.filename
-  // }`;
 
   const coverImg = {
     cover_image: imgPath,
@@ -78,10 +75,6 @@ export const addGalleryPhotos = async (req, res) => {
 
   const imgURL = await FileService.uploadFile(req, res);
   let imgPath = `https://bloonsoo-images-upload.s3.ap-southeast-1.amazonaws.com/${imgURL}`
-
-  // const imgPath = `${req.protocol}://${req.get("host")}/public/images/${
-  //   file.filename
-  // }`;
   
 
   try {

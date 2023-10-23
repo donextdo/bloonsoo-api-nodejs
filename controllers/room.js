@@ -90,7 +90,6 @@ export const addGalleryPhotos = async (req, res) => {
   let imgPath = `https://bloonsoo-images-upload.s3.ap-southeast-1.amazonaws.com/${imgURL}`;
 
 
-  // const imgPath = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
 
   try {
     const hotelExist = await Hotel.findById(req.params.id);
